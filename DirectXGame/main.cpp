@@ -7,6 +7,8 @@
 #include "TextureManager.h"
 #include "WinApp.h"	
 
+//確認
+
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	WinApp* win = nullptr;
