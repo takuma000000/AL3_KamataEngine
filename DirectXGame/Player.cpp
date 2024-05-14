@@ -2,13 +2,14 @@
 #include "cassert"
 
 
-void Player::Initialize(Model* model, uint32_t textureHandle) {
+void Player::Initialize(Model* model, uint32_t textureHandle, ViewProjection* viewProjection) {
 
 	assert(model);
 
 	model_ = model;
 	textureHandle_ = textureHandle;
-	//worldTransform_ = worldTransform;
+	viewProjection_ = viewProjection;
+	worldTransform_.Initialize();
 
 }
 
@@ -18,4 +19,8 @@ void Player::Update() {
 
 }
 
-void Player::Draw() {}
+void Player::Draw() {
+
+	model_->Draw(worldTransform_, *viewProjection_, textureHandle_);
+
+}
