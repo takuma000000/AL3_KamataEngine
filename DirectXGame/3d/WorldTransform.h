@@ -11,6 +11,8 @@ struct ConstBufferDataWorldTransform {
 	Matrix4x4 matWorld; // ローカル → ワールド変換行列
 };
 
+
+
 /// <summary>
 /// ワールド変換データ
 /// </summary>
@@ -29,6 +31,7 @@ public:
 
 	WorldTransform() = default;
 	~WorldTransform() = default;
+	
 
 	/// <summary>
 	/// 初期化
@@ -51,6 +54,8 @@ public:
 	/// </summary>
 	/// <returns>定数バッファ</returns>
 	const Microsoft::WRL::ComPtr<ID3D12Resource>& GetConstBuffer() const { return constBuffer_; }
+
+	void UpdateMatrix();
 
 private:
 	// 定数バッファ

@@ -49,9 +49,11 @@ private: // メンバ変数
 
 	Model* model_ = nullptr;
 
-	std::vector<WorldTransform*> worldTransformBlocks_;
+	std::vector<std::vector<WorldTransform*>> worldTransformBlocks_;
 
-	WorldTransform worldTransform_;
+	//WorldTransform worldTransform_;
+
+	ViewProjection viewProjection_;
 
 	/// <summary>
 	/// ゲームシーン用
