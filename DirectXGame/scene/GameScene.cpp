@@ -1,8 +1,8 @@
 #include "GameScene.h"
 #include "TextureManager.h"
-#include <cassert>
 #include <WorldTransformEX.cpp>
-//#include "MyMath.h"
+#include <cassert>
+// #include "MyMath.h"
 
 #include <cassert>
 #include <cmath>
@@ -199,6 +199,7 @@ GameScene::~GameScene() {
 	}
 	worldTransformBlocks_.clear();
 
+	delete debugCamera_;
 }
 
 void GameScene::Initialize() {
@@ -209,9 +210,9 @@ void GameScene::Initialize() {
 
 	model_ = Model::Create();
 
-	viewProjection_.Initialize();	
+	viewProjection_.Initialize();
 
-	//worldTransform_.Initialize();
+	// worldTransform_.Initialize();
 
 	const uint32_t kNumBlockVirtical = 10;
 	const uint32_t kNumBlockHorizontal = 20;
@@ -224,7 +225,7 @@ void GameScene::Initialize() {
 	}
 
 	for (uint32_t i = 0; i < kNumBlockVirtical; ++i) {
-		for (uint32_t j = 0; j < kNumBlockHorizontal; ++j){
+		for (uint32_t j = 0; j < kNumBlockHorizontal; ++j) {
 
 			if ((i + j) % 2 == 0) {
 				worldTransformBlocks_[i][j] = new WorldTransform();
@@ -232,31 +233,48 @@ void GameScene::Initialize() {
 				worldTransformBlocks_[i][j]->translation_.x = kBlockWidth * j;
 				worldTransformBlocks_[i][j]->translation_.y = kBlockHeight * i;
 			}
-
-			
 		}
 	}
 
+	debugCamera_ = new DebugCamera(1280, 720);
 }
 
 void GameScene::Update() {
 
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
-		 for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
 
 			if (!worldTransformBlock) {
 				continue;
 			}
 
-				worldTransformBlock->matWorld_ = MakeAffineMatrix(
-				worldTransformBlock->scale_, worldTransformBlock->rotation_,
-				worldTransformBlock->translation_);
+			worldTransformBlock->matWorld_ = MakeAffineMatrix(
+			    worldTransformBlock->scale_, worldTransformBlock->rotation_,
+			    worldTransformBlock->translation_);
 
-				worldTransformBlock->TransferMatrix();
-			
-		 }
+			worldTransformBlock->TransferMatrix();
+		}
 	}
 
+	debugCamera_->Update();
+
+#ifdef _DEBUG
+
+	if (input_->TriggerKey(DIK_SPACE)) {
+		isDebugCameraActive_ = true;
+	}
+
+#endif // _DEBUG
+
+	if (isDebugCameraActive_) {
+		debugCamera_->Update();
+		viewProjection_.matView = debugCamera_->GetView();
+		viewProjection_.matProjection = debugCamera_->GetProjection();
+
+		viewProjection_.TransferMatrix();
+	} else {
+		viewProjection_.UpdateMatrix();
+	}
 }
 
 void GameScene::Draw() {
@@ -280,21 +298,21 @@ void GameScene::Draw() {
 
 #pragma region 3Dオブジェクト描画
 	// 3Dオブジェクト描画前処理
-	Model::PreDraw(commandList);	
+	Model::PreDraw(commandList);
 
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
-		 for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
 
 			if (!worldTransformBlock) {
 				continue;
 			}
 
 			model_->Draw(*worldTransformBlock, viewProjection_);
-		 }
+		}
 	}
 
 	// 3Dオブジェクト描画後処理
