@@ -202,6 +202,7 @@ GameScene::~GameScene() {
 	delete debugCamera_;
 	delete modelSkydome_;
 	delete skydome_;
+	delete mapChipField_;
 }
 
 void GameScene::Initialize() {
@@ -218,6 +219,9 @@ void GameScene::Initialize() {
 
 	skydome_ = new Skydome;
 	skydome_->Initiaize(modelSkydome_, &viewProjection_);
+
+	mapChipField_ = new MapChipField;
+	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
 
 	// worldTransform_.Initialize();
 
@@ -244,6 +248,9 @@ void GameScene::Initialize() {
 	}
 
 	debugCamera_ = new DebugCamera(1280, 720);
+
+	GenerateBlocks();
+
 }
 
 void GameScene::Update() {
@@ -343,4 +350,31 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
+}
+
+void GameScene::GenerateBlocks() {
+
+	//要素数
+	uint32_t numBlockVirtical = mapChipField_->GetNumBlockVirtical();
+	uint32_t numBlockHorizontal = mapChipField_->GetNumBlockHorizontal();
+	
+	worldTransformBlocks_.resize(numBlockVirtical);
+
+	for (uint32_t i = 0; i < numBlockVirtical; ++i) {
+		worldTransformBlocks_[i].resize(numBlockHorizontal);
+	}
+
+	for (uint32_t i = 0; i < numBlockVirtical; ++i) {
+		for (uint32_t j = 0; j < numBlockHorizontal; ++j) {
+
+			if (mapChipField_->GetMapChipTypeByIndex(j,i)==MapChipType::kBlock) {
+				WorldTransform* worldTransform = new WorldTransform();
+				worldTransform->Initialize();
+				worldTransformBlocks_[i][j]=worldTransform;
+				worldTransformBlocks_[i][j]->translation_ =
+				    mapChipField_->GetMapChipPositionByIndex(j, i);
+			}
+		}
+	}
+
 }
