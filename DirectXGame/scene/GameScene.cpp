@@ -321,7 +321,7 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
-	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
+	/*for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
 
 			if (!worldTransformBlock) {
@@ -330,7 +330,7 @@ void GameScene::Draw() {
 
 			model_->Draw(*worldTransformBlock, viewProjection_);
 		}
-	}
+	}*/
 
 	skydome_->Draw();
 
