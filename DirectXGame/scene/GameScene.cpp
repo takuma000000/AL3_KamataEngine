@@ -9,11 +9,7 @@
 
 // class WorldTransform;
 
-GameScene::GameScene() {
-
-
-
-}
+GameScene::GameScene() {}
 
 GameScene::~GameScene() {
 
@@ -78,7 +74,6 @@ void GameScene::Initialize() {
 
 	// worldTransform_.Initialize();
 
-
 	debugCamera_ = new DebugCamera(1280, 720);
 
 	GenerateBlocks();
@@ -102,6 +97,7 @@ void GameScene::Update() {
 #ifdef _DEBUG
 
 	if (input_->TriggerKey(DIK_SPACE)) {
+
 		isDebugCameraActive_ = true;
 	}
 
@@ -117,6 +113,7 @@ void GameScene::Update() {
 		viewProjection_.UpdateMatrix();
 	}
 
+	//
 	skydome_->Update();
 }
 
@@ -148,14 +145,14 @@ void GameScene::Draw() {
 	/// </summary>
 
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
-	    for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
 
-	        if (!worldTransformBlock) {
-	            continue;
-	        }
+			if (!worldTransformBlock) {
+				continue;
+			}
 
-	        model_->Draw(*worldTransformBlock, viewProjection_);
-	    }
+			model_->Draw(*worldTransformBlock, viewProjection_);
+		}
 	}
 
 	skydome_->Draw();
@@ -177,5 +174,3 @@ void GameScene::Draw() {
 
 #pragma endregion
 }
-
-
