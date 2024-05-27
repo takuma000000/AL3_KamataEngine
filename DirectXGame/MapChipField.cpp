@@ -8,8 +8,6 @@
 #include <stdlib.h>
 
 
-
-
 namespace {
 
 std::map<std::string, MapChipType> mapChipTable = {
@@ -68,7 +66,7 @@ void MapChipField::LoadMapChipCsv(const std::string& filePath) {
 	}
 
 }
-
+	
 MapChipType MapChipField::GetMapChipTypeByIndex(uint32_t xIndex, uint32_t yIndex) {
 
 	if (xIndex < 0 || kNumBlockHorizontal - 1 < xIndex) {

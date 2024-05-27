@@ -37,7 +37,7 @@ public:
 	/// 初期化
 	/// </summary>
 	void Initialize();
-	/// <summary>
+	/// <summary>	
 	/// 定数バッファ生成
 	/// </summary>
 	void CreateConstBuffer();
