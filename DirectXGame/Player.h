@@ -2,6 +2,13 @@
 #include "Model.h"
 #include "WorldTransform.h"
 
+
+enum class LRDirection { 
+	kRight,
+	kLeft,
+};
+
+
 class Player {
 
 public:
@@ -25,4 +32,7 @@ private:
 	static inline const float kAcceleratuon_ = 1.0f;
 	static inline const float kAttenuation_ = 0.5f;
 	static inline const float kLimitRunSpeed = 1.0f;
+
+	LRDirection lrDirection_ = LRDirection::kRight;
+
 };
