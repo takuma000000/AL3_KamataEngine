@@ -5,7 +5,7 @@
 class Player {
 
 public:
-	void Initialize(Model* model, uint32_t textureHandle, ViewProjection* viewProjection);
+	void Initialize(Model* model, ViewProjection* viewProjection, const Vector3& position);
 
 	void Update();
 
@@ -20,4 +20,9 @@ private:
 
 	uint32_t textureHandle_ = 0u;
 
+	Vector3 velocity_ = {};
+
+	static inline const float kAcceleratuon_ = 1.0f;
+	static inline const float kAttenuation_ = 0.5f;
+	static inline const float kLimitRunSpeed = 1.0f;
 };

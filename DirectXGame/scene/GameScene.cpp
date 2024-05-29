@@ -26,6 +26,7 @@ GameScene::~GameScene() {
 	delete modelSkydome_;
 	delete skydome_;
 	delete mapChipField_;
+	delete player_;
 }
 
 void GameScene::GenerateBlocks() {
@@ -65,6 +66,11 @@ void GameScene::Initialize() {
 	viewProjection_.Initialize();
 
 	modelSkydome_ = Model::CreateFromOBJ("sphere", true);
+	//player_ = Model::CreateFromOBJ("sphere", true);
+
+	player_ = new Player();
+	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
+	player_->Initialize(model_, &viewProjection_, playerPosition);
 
 	skydome_ = new Skydome;
 	skydome_->Initiaize(modelSkydome_, &viewProjection_);
@@ -93,6 +99,8 @@ void GameScene::Update() {
 	}
 
 	debugCamera_->Update();
+
+	player_->Update();
 
 #ifdef _DEBUG
 
@@ -156,6 +164,8 @@ void GameScene::Draw() {
 	}
 
 	skydome_->Draw();
+
+	player_->Draw();
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
