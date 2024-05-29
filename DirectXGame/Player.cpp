@@ -22,7 +22,9 @@ void Player::Initialize(Model* model, ViewProjection* viewProjection, const Vect
 
 void Player::Update() {
 
-	worldTransform_.TransferMatrix();
+	worldTransform_.UpdateMatrix();
+
+
 
 	if (Input::GetInstance()->PushKey(DIK_RIGHT) || Input::GetInstance()->PushKey(DIK_LEFT)) {
 		Vector3 acc = {};
@@ -54,6 +56,13 @@ void Player::Update() {
 	}
 
 	worldTransform_.translation_ += velocity_;
+
+
+	float destinationRotationYTable[] = {
+	    std::numbers::pi_v<float> / 2.0f, std::numbers::pi_v<float> * 3.0f / 2.0f};
+
+	float destinationRotationY = destinationRotationYTable[static_cast<uint32_t>(lrDirection_)];
+	worldTransform_.rotation_.y = destinationRotationY;
 
 	worldTransform_.UpdateMatrix();
 }
