@@ -31,11 +31,21 @@ void Player::Update() {
 				velocity_.x *= (1.0f - kAttenuation_);
 			}
 			acc.x += kAcceleratuon_;
+
+			if (lrDirection_ != LRDirection::kRight) {
+				lrDirection_ = LRDirection::kRight;
+			}
+
 		} else if (Input::GetInstance()->PushKey(DIK_LEFT)) {
 			if (velocity_.x > 0.0f) {
 				velocity_.x *= (1.0f - kAttenuation_);
 			}
 			acc.x -= kAcceleratuon_;
+
+			if (lrDirection_ != LRDirection::kLeft) {
+				lrDirection_ = LRDirection::kLeft;
+			}
+
 		}
 		velocity_ += acc;
 		velocity_.x = std::clamp(velocity_.x, -kLimitRunSpeed, kLimitRunSpeed);
