@@ -29,10 +29,15 @@ private:
 
 	Vector3 velocity_ = {};
 
-	static inline const float kAcceleratuon_ = 1.0f;
-	static inline const float kAttenuation_ = 0.5f;
-	static inline const float kLimitRunSpeed = 1.0f;
+	static inline const float kAcceleratuon_ = 0.1f;
+	static inline const float kAttenuation_ = 0.1f;
+	static inline const float kLimitRunSpeed = 0.25f;
 
 	LRDirection lrDirection_ = LRDirection::kRight;
+
+	float turnFirstRotationY_ = 0.0f;
+	float turnTimer_ = 0.0f;
+
+	static inline const float kTimeTurn = 0.3f;
 
 };
