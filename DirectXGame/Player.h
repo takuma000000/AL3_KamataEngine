@@ -40,4 +40,21 @@ private:
 
 	static inline const float kTimeTurn = 0.3f;
 
+	//接地招待フラグ
+	bool onGround_ = true;
+
+	////重力加速度　　下方向
+	//static inline const float kGravityAcc = -1.0f;
+	////最大落下速度　　下方向
+	//static inline const float kLimitFallSpeed = 1.0f;
+	////ジャンプ初速　　上方向
+	//static inline const float kJumpAcc = 0.1f;
+
+	// 重力加速度　　下方向（単位: ピクセル/秒^2）
+	static inline const float kGravityAcc = 2.0f;
+	// 最大落下速度　　下方向（単位: ピクセル/秒）
+	static inline const float kLimitFallSpeed = 8.0f;
+	// ジャンプ初速　　上方向（単位: ピクセル/秒）
+	static inline const float kJumpAcc = 5.0f;
+
 };
