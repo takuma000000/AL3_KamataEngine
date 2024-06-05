@@ -4,6 +4,7 @@
 #include <Input.h>
 #include <algorithm>
 #include <numbers>
+#include "ImGuiManager.h"
 // #include "Vector3.h"
 
 float EaseInOutQuad(float t) {
@@ -77,7 +78,7 @@ void Player::Update() {
 		}
 	//空中
 	} else {
-		velocity_ += Vector3(0, -kGravityAcc, 0);
+		velocity_ += Vector3(0, kGravityAcc, 0);
 		velocity_.y = std::max(velocity_.y, -kLimitFallSpeed);
 	}
 
@@ -107,7 +108,7 @@ void Player::Update() {
 	//地面との当たり判定
 	if (velocity_.y < 0) {
 		//y座標が地面以下になったら着地
-		if (worldTransform_.translation_.y <= 1.0f) {
+		if (worldTransform_.translation_.y <= 2.0f) {
 			landing = true;
 		}
 	}
@@ -123,7 +124,7 @@ void Player::Update() {
 		//着地
 		if (landing) {
 			//めり込み排斥
-			worldTransform_.translation_.y = 1.0f;
+			worldTransform_.translation_.y = 2.0f;
 			//摩擦で横方向速度が減衰する
 			velocity_.x *= (1.0f - kAttenuation_);
 			//下方向速度をリセット
@@ -132,6 +133,11 @@ void Player::Update() {
 			onGround_ = true;
 		}
 	}
+
+	//
+	ImGui::Begin("A");
+	ImGui::SliderFloat3("velocity", &velocity_.x, 0.0f, 1.0f);
+	ImGui::End();
 
 }
 
