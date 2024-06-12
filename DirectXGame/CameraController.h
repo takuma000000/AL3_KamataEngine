@@ -11,7 +11,7 @@ class CameraController {
 
 public:
 
-	void Initialize(const ViewProjection& viewProjection);
+	void Initialize();
 
 	void Update();
 

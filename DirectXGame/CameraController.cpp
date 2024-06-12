@@ -2,9 +2,9 @@
 #include "Player.h"
 
 
-void CameraController::Initialize(const ViewProjection& viewProjection) {
+void CameraController::Initialize() {
 
-	 viewProjection_ = viewProjection;
+	 viewProjection_.Initialize();
 
 }
 

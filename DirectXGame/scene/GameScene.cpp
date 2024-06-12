@@ -80,7 +80,7 @@ void GameScene::Initialize() {
 	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
 
 	cameraController_ = new CameraController();
-	cameraController_->Initialize(viewProjection_);
+	cameraController_->Initialize();
 
 	// worldTransform_.Initialize();
 
