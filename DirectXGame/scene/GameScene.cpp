@@ -79,6 +79,9 @@ void GameScene::Initialize() {
 	mapChipField_ = new MapChipField;
 	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
 
+	cameraController_ = new CameraController();
+	cameraController_->Initialize(viewProjection_);
+
 	// worldTransform_.Initialize();
 
 	debugCamera_ = new DebugCamera(1280, 720);

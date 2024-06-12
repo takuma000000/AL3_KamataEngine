@@ -18,6 +18,8 @@ public:
 
 	void Draw();
 
+	const WorldTransform& GetWorldTransform() const { return worldTransform_; }
+
 private:
 	WorldTransform worldTransform_;
 
