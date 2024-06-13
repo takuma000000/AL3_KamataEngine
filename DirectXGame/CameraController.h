@@ -1,7 +1,8 @@
 #pragma once
 #include "WorldTransform.h"
 #include "Model.h"
-#include <Player.h>
+#include "Vector3.h"
+//#include <Player.h>
 
 // 前方宣言
 class Player;
@@ -25,9 +26,7 @@ private:
 
 	Player* target_ = nullptr;
 
-	Vector3 targetOffest_ = {0, 0, -15.0f};
-
-	WorldTransform worldTransform_;
+	Vector3 targetOffset_ = {0.0f, 0.0f, -15.0f};
 
 };
 

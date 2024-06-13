@@ -28,6 +28,7 @@ GameScene::~GameScene() {
 	delete mapChipField_;
 	delete player_;
 	delete modelPlayer_;
+	delete cameraController_;
 }
 
 void GameScene::GenerateBlocks() {
@@ -69,6 +70,8 @@ void GameScene::Initialize() {
 	modelSkydome_ = Model::CreateFromOBJ("sphere", true);
 	modelPlayer_ = Model::CreateFromOBJ("catCube", true);
 
+	
+
 	player_ = new Player();
 	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
 	player_->Initialize(modelPlayer_, &viewProjection_, playerPosition);
@@ -76,17 +79,19 @@ void GameScene::Initialize() {
 	skydome_ = new Skydome;
 	skydome_->Initiaize(modelSkydome_, &viewProjection_);
 
-	mapChipField_ = new MapChipField;
+	mapChipField_ = new MapChipField();
 	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
 
+	//カメラコントローラーの初期化
 	cameraController_ = new CameraController();
 	cameraController_->Initialize();
-
-	// worldTransform_.Initialize();
+	cameraController_->SetTarget(player_);
+	cameraController_->Reset();
 
 	debugCamera_ = new DebugCamera(1280, 720);
 
 	GenerateBlocks();
+	
 }
 
 void GameScene::Update() {
@@ -105,6 +110,8 @@ void GameScene::Update() {
 	debugCamera_->Update();
 
 	player_->Update();
+
+
 
 #ifdef _DEBUG
 
@@ -127,6 +134,7 @@ void GameScene::Update() {
 
 	//
 	skydome_->Update();
+	cameraController_->Update();
 }
 
 void GameScene::Draw() {
