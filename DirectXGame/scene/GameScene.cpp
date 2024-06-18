@@ -70,8 +70,6 @@ void GameScene::Initialize() {
 	modelSkydome_ = Model::CreateFromOBJ("sphere", true);
 	modelPlayer_ = Model::CreateFromOBJ("catCube", true);
 
-	
-
 	player_ = new Player();
 	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
 	player_->Initialize(modelPlayer_, &viewProjection_, playerPosition);
@@ -82,16 +80,18 @@ void GameScene::Initialize() {
 	mapChipField_ = new MapChipField();
 	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
 
-	//カメラコントローラーの初期化
+	// カメラコントローラーの初期化
 	cameraController_ = new CameraController();
 	cameraController_->Initialize();
 	cameraController_->SetTarget(player_);
 	cameraController_->Reset();
 
+	movaleArea_ = {100.0f, -100.0f, 6.0f, 6.0f};
+	cameraController_->SetMovableArea(movaleArea_);
+
 	debugCamera_ = new DebugCamera(1280, 720);
 
 	GenerateBlocks();
-	
 }
 
 void GameScene::Update() {
@@ -111,8 +111,6 @@ void GameScene::Update() {
 
 	player_->Update();
 
-
-
 #ifdef _DEBUG
 
 	if (input_->TriggerKey(DIK_SPACE)) {
@@ -122,6 +120,8 @@ void GameScene::Update() {
 
 #endif // _DEBUG
 
+	cameraController_->Update();
+
 	if (isDebugCameraActive_) {
 		debugCamera_->Update();
 		viewProjection_.matView = debugCamera_->GetView();
@@ -129,12 +129,15 @@ void GameScene::Update() {
 
 		viewProjection_.TransferMatrix();
 	} else {
-		viewProjection_.UpdateMatrix();
+
+		viewProjection_.matView = cameraController_->GetView();
+		viewProjection_.matProjection = cameraController_->GetProjection();
+
+		viewProjection_.TransferMatrix();
 	}
 
 	//
 	skydome_->Update();
-	cameraController_->Update();
 }
 
 void GameScene::Draw() {

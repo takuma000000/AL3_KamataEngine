@@ -80,7 +80,7 @@ private: // メンバ変数
 
 	CameraController* cameraController_ = nullptr;
 
-
+	Rect movaleArea_ = 0;
 
 	/// <summary>
 	/// ゲームシーン用
