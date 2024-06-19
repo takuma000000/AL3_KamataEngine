@@ -49,7 +49,7 @@ private:
 
 	Player* target_ = nullptr;
 
-	Vector3 targetOffset_ = {0.0f, 0.0f, -35.0f};
+	Vector3 targetOffset_ = {0.0f, 0.0f, -20.0f};
 
 	// カメラ移動範囲
 	Rect movableArea_ = {0, 100, 0, 100};

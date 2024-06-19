@@ -25,6 +25,9 @@ void Player::Initialize(Model* model, ViewProjection* viewProjection, const Vect
 
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
+	worldTransform_.scale_.x = 0.5f;
+	worldTransform_.scale_.y = 0.5f;
+	worldTransform_.scale_.z = 0.5f;
 	worldTransform_.rotation_.y = std::numbers::pi_v<float> / 2.0f;
 
 	viewProjection_ = viewProjection;
@@ -108,7 +111,7 @@ void Player::Update() {
 	//地面との当たり判定
 	if (velocity_.y < 0) {
 		//y座標が地面以下になったら着地
-		if (worldTransform_.translation_.y <= 2.0f) {
+		if (worldTransform_.translation_.y <= 1.0f) {
 			landing = true;
 		}
 	}
@@ -124,7 +127,7 @@ void Player::Update() {
 		//着地
 		if (landing) {
 			//めり込み排斥
-			worldTransform_.translation_.y = 2.0f;
+			worldTransform_.translation_.y = 1.0f;
 			//摩擦で横方向速度が減衰する
 			velocity_.x *= (1.0f - kAttenuation_);
 			//下方向速度をリセット

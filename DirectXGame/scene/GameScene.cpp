@@ -29,6 +29,7 @@ GameScene::~GameScene() {
 	delete player_;
 	delete modelPlayer_;
 	delete cameraController_;
+	delete modelBlock_;
 }
 
 void GameScene::GenerateBlocks() {
@@ -69,7 +70,7 @@ void GameScene::Initialize() {
 
 	modelSkydome_ = Model::CreateFromOBJ("sphere", true);
 	modelPlayer_ = Model::CreateFromOBJ("catCube", true);
-
+	modelBlock_ = Model::CreateFromOBJ("block", true);
 	
 
 	skydome_ = new Skydome;
@@ -179,7 +180,7 @@ void GameScene::Draw() {
 				continue;
 			}
 
-			model_->Draw(*worldTransformBlock, viewProjection_);
+			modelBlock_->Draw(*worldTransformBlock, viewProjection_);
 		}
 	}
 

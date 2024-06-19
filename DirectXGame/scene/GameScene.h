@@ -78,9 +78,11 @@ private: // メンバ変数
 
 	Model* modelPlayer_ = nullptr;
 
+	Model* modelBlock_ = nullptr;
+
 	CameraController* cameraController_ = nullptr;
 
-	Rect movaleArea_ = 0;
+	Rect movaleArea_ = {};
 
 	/// <summary>
 	/// ゲームシーン用

@@ -23,6 +23,8 @@ public:
 
 	const Vector3& GetVelocity() const { return velocity_; }
 
+	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
+
 private:
 	WorldTransform worldTransform_;
 
@@ -45,7 +47,6 @@ private:
 
 	static inline const float kTimeTurn = 0.3f;
 
-	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
 
 	//接地招待フラグ
 	bool onGround_ = true;
