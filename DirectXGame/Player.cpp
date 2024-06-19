@@ -1,10 +1,10 @@
 ﻿#define NOMINMAX
 #include "Player.h"
+#include "ImGuiManager.h"
 #include "cassert"
 #include <Input.h>
 #include <algorithm>
 #include <numbers>
-#include "ImGuiManager.h"
 // #include "Vector3.h"
 
 float EaseInOutQuad(float t) {
@@ -37,7 +37,80 @@ void Player::Update() {
 
 	worldTransform_.UpdateMatrix();
 
-	
+	worldTransform_.translation_ += velocity_;
+
+	// 移動入力
+	KeyMove();
+
+	// 衝突情報を初期化
+	CollisionMapInfo collisionMapInfo;
+	// 移動量に速度の値をコピー
+	collisionMapInfo.isMovement = velocity_;
+
+	// マップ衝突チェック
+	HitMap(collisionMapInfo);
+
+	if (turnTimer_ > 0.0f) {
+
+		turnTimer_ -= kTimeTurn / 60.0f;
+
+		float destinationRotationYTable[] = {
+		    std::numbers::pi_v<float> / 2.0f, std::numbers::pi_v<float> * 3.0f / 2.0f};
+
+		float destinationRotationY = destinationRotationYTable[static_cast<uint32_t>(lrDirection_)];
+		// 現在の角度を旋回開始時の角度から目標の角度に補完する
+		float t = 1.0f - (turnTimer_ / kTimeTurn);
+		float currentRotationY =
+		    turnFirstRotationY_ + (destinationRotationY - turnFirstRotationY_) * t;
+		// 自キャラの角度を設定する
+		worldTransform_.rotation_.y = currentRotationY;
+	}
+
+	worldTransform_.UpdateMatrix();
+
+	// 着地フラグ
+	bool landing = false;
+
+	// 地面との当たり判定
+	if (velocity_.y < 0) {
+		// y座標が地面以下になったら着地
+		if (worldTransform_.translation_.y <= 1.0f) {
+			landing = true;
+		}
+	}
+
+	// 接地判定
+	if (onGround_) {
+		// ジャンプ開始
+		if (velocity_.y > 0.0f) {
+			// 空中状態に移動
+			onGround_ = false;
+		}
+	} else {
+		// 着地
+		if (landing) {
+			// めり込み排斥
+			worldTransform_.translation_.y = 1.0f;
+			// 摩擦で横方向速度が減衰する
+			velocity_.x *= (1.0f - kAttenuation_);
+			// 下方向速度をリセット
+			velocity_.y = 0.0f;
+			// 接地状態に移行
+			onGround_ = true;
+		}
+	}
+
+	//
+	ImGui::Begin("A");
+	ImGui::SliderFloat3("velocity", &velocity_.x, 0.0f, 1.0f);
+	ImGui::End();
+}
+
+void Player::Draw() { model_->Draw(worldTransform_, *viewProjection_); }
+
+void Player::KeyMove() {
+
+	// 移動入力
 	if (onGround_) {
 
 		if (Input::GetInstance()->PushKey(DIK_RIGHT) || Input::GetInstance()->PushKey(DIK_LEFT)) {
@@ -77,71 +150,25 @@ void Player::Update() {
 				// ジャンプ初速
 				velocity_ += Vector3(0, kJumpAcc, 0);
 			}
-
 		}
-	//空中
+		// 空中
 	} else {
 		velocity_ += Vector3(0, kGravityAcc, 0);
 		velocity_.y = std::max(velocity_.y, -kLimitFallSpeed);
 	}
-
-	worldTransform_.translation_ += velocity_;
-
-	if (turnTimer_ > 0.0f) {
-
-		turnTimer_ -= kTimeTurn / 60.0f;
-
-		float destinationRotationYTable[] = {
-		    std::numbers::pi_v<float> / 2.0f, std::numbers::pi_v<float> * 3.0f / 2.0f};
-
-		float destinationRotationY = destinationRotationYTable[static_cast<uint32_t>(lrDirection_)];
-		// 現在の角度を旋回開始時の角度から目標の角度に補完する
-		float t = 1.0f - (turnTimer_ / kTimeTurn);
-		float currentRotationY =
-		    turnFirstRotationY_ + (destinationRotationY - turnFirstRotationY_) * t;
-		// 自キャラの角度を設定する
-		worldTransform_.rotation_.y = currentRotationY;
-	}
-
-	worldTransform_.UpdateMatrix();
-
-	//着地フラグ
-	bool landing = false;
-
-	//地面との当たり判定
-	if (velocity_.y < 0) {
-		//y座標が地面以下になったら着地
-		if (worldTransform_.translation_.y <= 1.0f) {
-			landing = true;
-		}
-	}
-
-	//接地判定
-	if (onGround_) {
-		//ジャンプ開始
-		if (velocity_.y > 0.0f) {
-			//空中状態に移動
-			onGround_ = false;
-		}
-	} else {
-		//着地
-		if (landing) {
-			//めり込み排斥
-			worldTransform_.translation_.y = 1.0f;
-			//摩擦で横方向速度が減衰する
-			velocity_.x *= (1.0f - kAttenuation_);
-			//下方向速度をリセット
-			velocity_.y = 0.0f;
-			//接地状態に移行
-			onGround_ = true;
-		}
-	}
-
-	//
-	ImGui::Begin("A");
-	ImGui::SliderFloat3("velocity", &velocity_.x, 0.0f, 1.0f);
-	ImGui::End();
-
 }
 
-void Player::Draw() { model_->Draw(worldTransform_, *viewProjection_); }
+void Player::HitMap(CollisionMapInfo& info) {}
+
+Vector3 Player::CornersPosition(const Vector3& center, Corner corner) {
+
+	if (corner == kRightBottom) {
+		return {center.x + kWidth / 2.0f, center.y + -kHeight / 2.0f, 0};
+	} else if (corner == kLeftBottom) {
+		return {center.x + -kWidth / 2.0f, center.y + -kHeight / 2.0f, 0};
+	} else if (corner == kRightTop) {
+		return {center.x + kWidth / 2.0f, center.y + kHeight / 2.0f, 0};
+	} else {
+		return {center.x + -kWidth / 2.0f, center.y + kHeight / 2.0f, 0};
+	}
+}

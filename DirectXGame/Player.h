@@ -2,10 +2,29 @@
 #include "Model.h"
 #include "WorldTransform.h"
 
+struct CollisionMapInfo {
+	//天井衝突
+	bool isCeilingHit = false;
+	//着地
+	bool isLanding = false;
+	//壁接触
+	bool isWallHit = false;
+	//移動量
+	Vector3 isMovement;
+};
 
 enum class LRDirection { 
 	kRight,
 	kLeft,
+};
+
+enum Corner {
+	kRightBottom,//右下
+	kLeftBottom,//左下
+	kRightTop,//右上
+	kLeftTop,//左上
+
+	kNumCorner//要素数
 };
 
 class MapChipField;
@@ -24,6 +43,14 @@ public:
 	const Vector3& GetVelocity() const { return velocity_; }
 
 	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
+
+	void KeyMove();
+
+	//マップ衝突判定
+	void HitMap(CollisionMapInfo& info);
+
+	//指定した門野座標計算
+	Vector3 CornersPosition(const Vector3& center, Corner corner);
 
 private:
 	WorldTransform worldTransform_;
@@ -61,5 +88,8 @@ private:
 	//マップチップによるフィールド
 	MapChipField* mapChipField_ = nullptr;
 
+	//キャラクターの当たり判定サイズ
+	static inline const float kWidth = 0.8f;
+	static inline const float kHeight = 0.8f;
 
 };
