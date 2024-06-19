@@ -8,6 +8,7 @@ enum class LRDirection {
 	kLeft,
 };
 
+class MapChipField;
 
 class Player {
 
@@ -44,6 +45,8 @@ private:
 
 	static inline const float kTimeTurn = 0.3f;
 
+	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
+
 	//接地招待フラグ
 	bool onGround_ = true;
 
@@ -54,6 +57,8 @@ private:
 	//ジャンプ初速　　上方向
 	static inline const float kJumpAcc = 0.5f;
 
-	
+	//マップチップによるフィールド
+	MapChipField* mapChipField_ = nullptr;
+
 
 };

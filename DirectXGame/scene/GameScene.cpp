@@ -70,15 +70,20 @@ void GameScene::Initialize() {
 	modelSkydome_ = Model::CreateFromOBJ("sphere", true);
 	modelPlayer_ = Model::CreateFromOBJ("catCube", true);
 
-	player_ = new Player();
-	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
-	player_->Initialize(modelPlayer_, &viewProjection_, playerPosition);
+	
 
 	skydome_ = new Skydome;
 	skydome_->Initiaize(modelSkydome_, &viewProjection_);
-
+	
+	//
 	mapChipField_ = new MapChipField();
 	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
+
+	//
+	player_ = new Player();
+	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
+	player_->Initialize(modelPlayer_, &viewProjection_, playerPosition);
+	player_->SetMapChipField(mapChipField_);
 
 	// カメラコントローラーの初期化
 	cameraController_ = new CameraController();
