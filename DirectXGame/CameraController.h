@@ -37,6 +37,12 @@ public:
 	//座標保管割合
 	static inline const float kInterpolationRate = 0.1f;
 
+	//速度掛け率
+	static inline const float kVelocityBias = 30.0f;
+
+	//追従対象の各方向へのカメラ移動範囲
+	static inline const Rect margin = {-100, 100, -60, 60};
+
 private:
 
 	ViewProjection viewProjection_;

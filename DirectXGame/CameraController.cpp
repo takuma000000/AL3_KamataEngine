@@ -4,6 +4,7 @@
 #include "Player.h"
 #include <iostream>
 
+
 Vector3 Lerp(const Vector3& a, const Vector3& b, float t) {
 	if (t <= 0.0f) {
 		return a;
@@ -22,8 +23,6 @@ void CameraController::Initialize() {
 
 	 viewProjection_.Initialize();
 
-	
-
 }
 
 void CameraController::Update() {
@@ -31,10 +30,14 @@ void CameraController::Update() {
 	//追従対象のワールドトランスフォームを参照
 	const WorldTransform& targetWorldTransform = target_->GetWorldTransform();
 
-	//追従対象とオフセットからカメラの目標座標を計算
-	mark_ = targetWorldTransform.translation_ + targetOffset_;
 
-	//座標補間二よりゆったり追従
+	const Vector3& targetVelocity = target_->GetVelocity();
+
+
+	//追従対象とオフセットと追従対象の速度からカメラの目標座標を計算
+	mark_ = targetWorldTransform.translation_ + targetOffset_ + targetVelocity * kVelocityBias;
+
+	//座標補間によりゆったり追従
 	viewProjection_.translation_ = Lerp(viewProjection_.translation_, mark_, kInterpolationRate);
 
 	//移動範囲制限
@@ -44,6 +47,8 @@ void CameraController::Update() {
 	viewProjection_.translation_.y = std::max(viewProjection_.translation_.y, movableArea_.top);
 
 	viewProjection_.UpdateMatrix();
+
+	
 
 }
 
