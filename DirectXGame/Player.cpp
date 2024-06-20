@@ -5,7 +5,9 @@
 #include <Input.h>
 #include <algorithm>
 #include <numbers>
-// #include "Vector3.h"
+#include <MapChipField.h>
+#include <DebugText.h>
+    // #include "Vector3.h"
 
 float EaseInOutQuad(float t) {
 	if (t < 0.5f) {
@@ -50,21 +52,8 @@ void Player::Update() {
 	// マップ衝突チェック
 	HitMap(collisionMapInfo);
 
-	if (turnTimer_ > 0.0f) {
-
-		turnTimer_ -= kTimeTurn / 60.0f;
-
-		float destinationRotationYTable[] = {
-		    std::numbers::pi_v<float> / 2.0f, std::numbers::pi_v<float> * 3.0f / 2.0f};
-
-		float destinationRotationY = destinationRotationYTable[static_cast<uint32_t>(lrDirection_)];
-		// 現在の角度を旋回開始時の角度から目標の角度に補完する
-		float t = 1.0f - (turnTimer_ / kTimeTurn);
-		float currentRotationY =
-		    turnFirstRotationY_ + (destinationRotationY - turnFirstRotationY_) * t;
-		// 自キャラの角度を設定する
-		worldTransform_.rotation_.y = currentRotationY;
-	}
+	//旋回制御
+	TurningControl();
 
 	worldTransform_.UpdateMatrix();
 
@@ -158,17 +147,111 @@ void Player::KeyMove() {
 	}
 }
 
-void Player::HitMap(CollisionMapInfo& info) {}
+void Player::TurningControl() {
+
+	//旋回制御
+	 if (turnTimer_ > 0.0f) {
+
+		turnTimer_ -= kTimeTurn / 60.0f;
+
+		float destinationRotationYTable[] = {
+		    std::numbers::pi_v<float> / 2.0f, std::numbers::pi_v<float> * 3.0f / 2.0f};
+
+		float destinationRotationY = destinationRotationYTable[static_cast<uint32_t>(lrDirection_)];
+		// 現在の角度を旋回開始時の角度から目標の角度に補完する
+		float t = 1.0f - (turnTimer_ / kTimeTurn);
+		float currentRotationY =
+		    turnFirstRotationY_ + (destinationRotationY - turnFirstRotationY_) * t;
+		// 自キャラの角度を設定する
+		worldTransform_.rotation_.y = currentRotationY;
+	}
+
+}
+
+void Player::HitMap(CollisionMapInfo& info) {
+
+	HitMapUp(info);
+	/*HitMapDown(info);
+	HitMapRight(info);
+	HitMapLeft(info);*/
+
+}
+
+void Player::HitMapUp(CollisionMapInfo& info) {
+
+	// 上昇あり？
+	 if (info.isMovement.y <= 0) {
+		return;
+	 }
+
+	//移動後の4つの角の座標
+	 std::array<Vector3, kNumCorner> positionsNew;
+
+	 for (uint32_t i = 0; i < positionsNew.size(); ++i) {
+		positionsNew[i] =
+		    CornersPosition(worldTransform_.translation_ + info.isMovement, static_cast<Corner>(i));
+	 }
+
+	 MapChipType mapChipType;
+	 //真上の当たり判定を行う
+	 bool hit = false;
+
+	 //左上点の判定
+	 MapChipField::IndexSet indexSet;
+	 indexSet = mapChipField_->GetMapChipIndexSetByPosition(positionsNew[kLeftTop]);
+	 mapChipType = mapChipField_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex);
+	 if (mapChipType == MapChipType::kBlock) {
+		hit = true;
+	 }
+
+	 //右上点の判定
+	 MapChipField::IndexSet indexSet2;
+	 indexSet2 = mapChipField_->GetMapChipIndexSetByPosition(positionsNew[kRightTop]);
+	 mapChipType = mapChipField_->GetMapChipTypeByIndex(indexSet2.xIndex, indexSet2.yIndex);
+	 if (mapChipType == MapChipType::kBlock) {
+		hit = true;
+	 }
+
+	 //ブロックにヒット
+	 if (hit) {
+		//めり込みを排除する方向に移動量を設定する
+		indexSet = mapChipField_->GetMapChipIndexSetByPosition(
+		    worldTransform_.translation_ + Vector3(0, +kHeight / 2.0f, 0));
+
+		//めり込み先ブロックの範囲矩形
+		MapChipField::Rect rect = mapChipField_->GetRectByIndex(indexSet.xIndex, indexSet.yIndex);
+		info.isMovement.y = std::max(
+		    0.0f, rect.bottom - worldTransform_.translation_.y - (kHeight / 2.0f + kBlank));
+	 }
+
+}
 
 Vector3 Player::CornersPosition(const Vector3& center, Corner corner) {
 
-	if (corner == kRightBottom) {
-		return {center.x + kWidth / 2.0f, center.y + -kHeight / 2.0f, 0};
-	} else if (corner == kLeftBottom) {
-		return {center.x + -kWidth / 2.0f, center.y + -kHeight / 2.0f, 0};
-	} else if (corner == kRightTop) {
-		return {center.x + kWidth / 2.0f, center.y + kHeight / 2.0f, 0};
-	} else {
-		return {center.x + -kWidth / 2.0f, center.y + kHeight / 2.0f, 0};
+	Vector3 offsetTable[kNumCorner] = {
+
+	    {+kWidth / 2.0f, -kHeight / 2.0f, 0},//kRightBottom
+
+	    {-kWidth / 2.0f, -kHeight / 2.0f, 0},//kLeftBottom
+
+	    {+kWidth / 2.0f, +kHeight / 2.0f, 0},//kRightTop
+
+	    {-kWidth / 2.0f, +kHeight / 2.0f, 0}//kLeftTop
+	};
+	
+	return center + offsetTable[static_cast<uint32_t>(corner)];
+
+}
+
+void Player::ReflectionResult(const CollisionMapInfo& info) {
+	//移動
+	worldTransform_.translation_ += info.isMovement;
+}
+
+void Player::CeilingContact(const CollisionMapInfo& info) {
+	//天井に当たった？
+	if (info.isCeilingHit) {
+		DebugText::GetInstance()->ConsolePrintf("hit celing\n");
+		velocity_.y = 0;
 	}
 }

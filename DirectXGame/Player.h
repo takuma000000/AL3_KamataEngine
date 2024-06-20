@@ -3,28 +3,28 @@
 #include "WorldTransform.h"
 
 struct CollisionMapInfo {
-	//天井衝突
+	// 天井衝突
 	bool isCeilingHit = false;
-	//着地
+	// 着地
 	bool isLanding = false;
-	//壁接触
+	// 壁接触
 	bool isWallHit = false;
-	//移動量
+	// 移動量
 	Vector3 isMovement;
 };
 
-enum class LRDirection { 
+enum class LRDirection {
 	kRight,
 	kLeft,
 };
 
 enum Corner {
-	kRightBottom,//右下
-	kLeftBottom,//左下
-	kRightTop,//右上
-	kLeftTop,//左上
+	kRightBottom, // 右下
+	kLeftBottom,  // 左下
+	kRightTop,    // 右上
+	kLeftTop,     // 左上
 
-	kNumCorner//要素数
+	kNumCorner // 要素数
 };
 
 class MapChipField;
@@ -46,11 +46,27 @@ public:
 
 	void KeyMove();
 
-	//マップ衝突判定
-	void HitMap(CollisionMapInfo& info);
+	void TurningControl();
 
-	//指定した門野座標計算
+	// マップ衝突判定
+	void HitMap(CollisionMapInfo& info);
+	// マップ衝突判定 上
+	void HitMapUp(CollisionMapInfo& info);
+	// マップ衝突判定 下
+	void HitMapDown(CollisionMapInfo& info);
+	// マップ衝突判定 右
+	void HitMapRight(CollisionMapInfo& info);
+	// マップ衝突判定 左
+	void HitMapLeft(CollisionMapInfo& info);
+
+	// 指定した門野座標計算
 	Vector3 CornersPosition(const Vector3& center, Corner corner);
+
+	//判定結果を反映して移動させる
+	void ReflectionResult(const CollisionMapInfo& info);
+
+	//天井に接触している場合の処理
+	void CeilingContact(const CollisionMapInfo& info);
 
 private:
 	WorldTransform worldTransform_;
@@ -74,22 +90,22 @@ private:
 
 	static inline const float kTimeTurn = 0.3f;
 
-
-	//接地招待フラグ
+	// 接地招待フラグ
 	bool onGround_ = true;
 
-	//重力加速度　　下方向
+	// 重力加速度　　下方向
 	static inline const float kGravityAcc = -0.05f;
-	//最大落下速度　　下方向
+	// 最大落下速度　　下方向
 	static inline const float kLimitFallSpeed = 1.0f;
-	//ジャンプ初速　　上方向
+	// ジャンプ初速　　上方向
 	static inline const float kJumpAcc = 0.5f;
 
-	//マップチップによるフィールド
+	// マップチップによるフィールド
 	MapChipField* mapChipField_ = nullptr;
 
-	//キャラクターの当たり判定サイズ
+	// キャラクターの当たり判定サイズ
 	static inline const float kWidth = 0.8f;
 	static inline const float kHeight = 0.8f;
 
+	static inline const float kBlank = 0.2f;
 };
