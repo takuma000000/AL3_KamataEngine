@@ -68,6 +68,9 @@ public:
 	//天井に接触している場合の処理
 	void CeilingContact(const CollisionMapInfo& info);
 
+	//接地状態の切り替え処理
+	void GroundSwitch(const CollisionMapInfo& info);
+
 private:
 	WorldTransform worldTransform_;
 
@@ -108,4 +111,7 @@ private:
 	static inline const float kHeight = 0.8f;
 
 	static inline const float kBlank = 0.2f;
+
+	//着地時の速度減衰率
+	static inline const float kAttenLanding = 0.5f;
 };
