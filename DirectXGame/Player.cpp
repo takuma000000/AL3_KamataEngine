@@ -55,6 +55,8 @@ void Player::Update() {
 	//旋回制御
 	TurningControl();
 
+	
+
 	worldTransform_.UpdateMatrix();
 
 	// 着地フラグ
@@ -222,7 +224,13 @@ void Player::HitMapUp(CollisionMapInfo& info) {
 		MapChipField::Rect rect = mapChipField_->GetRectByIndex(indexSet.xIndex, indexSet.yIndex);
 		info.isMovement.y = std::max(
 		    0.0f, rect.bottom - worldTransform_.translation_.y - (kHeight / 2.0f + kBlank));
+
+		// 衝突判定
+		info.isCeilingHit = true;
 	 }
+
+	 //衝突
+	 CeilingContact(info);
 
 }
 
