@@ -71,6 +71,9 @@ public:
 	//接地状態の切り替え処理
 	void GroundSwitch(const CollisionMapInfo& info);
 
+	//壁に接触している場合の処理
+	void HittingWall(const CollisionMapInfo& info);
+
 private:
 	WorldTransform worldTransform_;
 
@@ -110,8 +113,13 @@ private:
 	static inline const float kWidth = 0.8f;
 	static inline const float kHeight = 0.8f;
 
-	static inline const float kBlank = 0.2f;
+	static inline const float kBlank = 1.8f;
 
 	//着地時の速度減衰率
-	static inline const float kAttenLanding = 0.5f;
+	static inline const float kAttenLanding = 1.0f;
+
+	static inline const float tiny = 0.5f;
+
+	//着地時の速度減衰率
+	static inline const float kAttenWall = 1.0f;
 };
