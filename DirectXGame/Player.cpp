@@ -421,6 +421,8 @@ void Player::GroundSwitch(const CollisionMapInfo& info) {
 		// ジャンプ開始
 		if (velocity_.y > 0.0f) {
 			onGround_ = false;
+		} else {
+			onGround_ = true;
 		}
 
 	} else {
