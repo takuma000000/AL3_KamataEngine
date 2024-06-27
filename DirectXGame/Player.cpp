@@ -441,7 +441,7 @@ void Player::GroundSwitch(const CollisionMapInfo& info) {
 
 		for (uint32_t i = 0; i < positionsNew.size(); ++i) {
 			positionsNew[i] = CornersPosition(
-			    worldTransform_.translation_ + info.isMovement, static_cast<Corner>(i));
+				worldTransform_.translation_ + info.isMovement, static_cast<Corner>(i));
 		}
 
 		MapChipType mapChipType;
