@@ -55,18 +55,22 @@ void Player::Update() {
 	// 旋回制御
 	TurningControl();
 
+	GroundSwitch(collisionMapInfo);
+
 	worldTransform_.UpdateMatrix();
 
 	// 着地フラグ
 	bool landing = false;
 
-	// 地面との当たり判定
-	if (velocity_.y < 0) {
-		// y座標が地面以下になったら着地
-		if (worldTransform_.translation_.y <= 1.0f) {
-			landing = true;
-		}
-	}
+	//// 地面との当たり判定
+	//if (velocity_.y < 0) {
+	//	// y座標が地面以下になったら着地
+	//	if (worldTransform_.translation_.y <= 1.0f) {
+	//		landing = true;
+	//	}
+	//}
+
+
 
 	// 接地判定
 	if (onGround_) {
@@ -92,6 +96,8 @@ void Player::Update() {
 	//
 	ImGui::Begin("A");
 	ImGui::SliderFloat3("velocity", &velocity_.x, 0.0f, 1.0f);
+	ImGui::Checkbox("onGround_", &onGround_);
+	ImGui::Checkbox("landing", &landing);
 	ImGui::End();
 }
 
@@ -142,8 +148,8 @@ void Player::KeyMove() {
 		}
 		// 空中
 	} else {
-		velocity_ += Vector3(0, kGravityAcc, 0);
-		velocity_.y = std::max(velocity_.y, -kLimitFallSpeed);
+		/*velocity_ += Vector3(0, kGravityAcc, 0);
+		velocity_.y = std::max(velocity_.y, -kLimitFallSpeed);*/
 	}
 }
 
@@ -227,6 +233,9 @@ void Player::HitMapUp(CollisionMapInfo& info) {
 
 	// 衝突
 	CeilingContact(info);
+
+
+	
 }
 
 void Player::HitMapDown(CollisionMapInfo& info) {
@@ -274,9 +283,10 @@ void Player::HitMapDown(CollisionMapInfo& info) {
 		info.isMovement.y = std::min(
 		    0.0f, rect.bottom - worldTransform_.translation_.y - (kHeight / 2.0f + kBlank));
 		info.isLanding = true;
+	} else {
+		info.isLanding = false;
 	}
 
-	GroundSwitch(info);
 
 	CeilingContact(info);
 }
@@ -421,22 +431,9 @@ void Player::GroundSwitch(const CollisionMapInfo& info) {
 		// ジャンプ開始
 		if (velocity_.y > 0.0f) {
 			onGround_ = false;
-		} else {
-			onGround_ = true;
 		}
 
-	} else {
-
-		// 空中状態の処理
-		// 着地フラグ
-		if (info.isLanding) {
-			// 着地状態に切り替える( 落下を止める )
-			onGround_ = true;
-			// 着地時にX速度を減衰
-			velocity_.x *= (1.0f - kAttenLanding);
-			// Y速度を0にする
-			velocity_.y = 0.0f;
-		}
+		
 
 		// 移動後の4つの角の座標
 		std::array<Vector3, kNumCorner> positionsNew;
@@ -471,6 +468,24 @@ void Player::GroundSwitch(const CollisionMapInfo& info) {
 		if (!hit) {
 			// 空中状態に切り替える
 			onGround_ = false;
+		}
+
+	} else {
+
+		// 空中状態の処理
+		// 着地フラグ
+		if (info.isLanding) {
+			// 着地状態に切り替える( 落下を止める )
+			onGround_ = true;
+			// 着地時にX速度を減衰
+			velocity_.x *= (1.0f - kAttenLanding);
+			// Y速度を0にする
+			velocity_.y = 0.0f;
+		} else {
+
+			velocity_.y += kGravityAcc;
+
+			velocity_.y = std::max(velocity_.y, -kLimitFallSpeed);
 		}
 	}
 }
