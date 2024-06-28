@@ -30,6 +30,8 @@ GameScene::~GameScene() {
 	delete modelPlayer_;
 	delete cameraController_;
 	delete modelBlock_;
+	delete enemy_;
+	delete modelEnemy_;
 }
 
 void GameScene::GenerateBlocks() {
@@ -71,6 +73,7 @@ void GameScene::Initialize() {
 	modelSkydome_ = Model::CreateFromOBJ("sphere", true);
 	modelPlayer_ = Model::CreateFromOBJ("catCube", true);
 	modelBlock_ = Model::CreateFromOBJ("block", true);
+	modelEnemy_ = Model::CreateFromOBJ("enemy", true);
 	
 
 	skydome_ = new Skydome;
@@ -91,6 +94,12 @@ void GameScene::Initialize() {
 	cameraController_->Initialize();
 	cameraController_->SetTarget(player_);
 	cameraController_->Reset();
+
+	//enemy
+	enemy_ = new Enemy;
+	Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(15, 18);
+	enemy_->Initialize(modelEnemy_, &viewProjection_, enemyPosition);
+	enemy_->SetMapChipField(mapChipField_);
 
 	movaleArea_ = {100.0f, -100.0f, 6.0f, 6.0f};
 	cameraController_->SetMovableArea(movaleArea_);
@@ -116,6 +125,8 @@ void GameScene::Update() {
 	debugCamera_->Update();
 
 	player_->Update();
+
+	enemy_->Updata();
 
 #ifdef _DEBUG
 
@@ -187,6 +198,7 @@ void GameScene::Draw() {
 	skydome_->Draw();
 
 	player_->Draw();
+	enemy_->Draw();
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

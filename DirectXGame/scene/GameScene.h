@@ -14,6 +14,7 @@
 #include "MapChipField.h"
 #include "Player.h"
 #include "CameraController.h"
+#include "Enemy.h"
 
 /// <summary>
 /// ゲームシーン
@@ -83,6 +84,10 @@ private: // メンバ変数
 	CameraController* cameraController_ = nullptr;
 
 	Rect movaleArea_ = {};
+
+	Enemy* enemy_ = nullptr;
+
+	Model* modelEnemy_;
 
 	/// <summary>
 	/// ゲームシーン用
