@@ -96,10 +96,13 @@ void GameScene::Initialize() {
 	cameraController_->Reset();
 
 	//enemy
-	enemy_ = new Enemy;
-	Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(15, 18);
-	enemy_->Initialize(modelEnemy_, &viewProjection_, enemyPosition);
-	enemy_->SetMapChipField(mapChipField_);
+	for (int32_t i = 0; i < 3; ++i) {
+
+		Enemy* newEnemy = new Enemy();
+		Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(15, 18);
+		enemy_->Initialize(modelEnemy_, &viewProjection_, enemyPosition);
+		enemy_->SetMapChipField(mapChipField_);
+	}
 
 	movaleArea_ = {100.0f, -100.0f, 6.0f, 6.0f};
 	cameraController_->SetMovableArea(movaleArea_);

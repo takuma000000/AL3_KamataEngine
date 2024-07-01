@@ -89,6 +89,9 @@ private: // メンバ変数
 
 	Model* modelEnemy_;
 
+	//敵の複数化
+	std::list<Enemy*> enemies_;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
