@@ -22,6 +22,10 @@ GameScene::~GameScene() {
 	}
 	worldTransformBlocks_.clear();
 
+	for (Enemy* enemy : enemies_) {
+		delete enemy;
+	}
+
 	delete debugCamera_;
 	delete modelSkydome_;
 	delete skydome_;
@@ -96,12 +100,13 @@ void GameScene::Initialize() {
 	cameraController_->Reset();
 
 	//enemy
-	for (int32_t i = 0; i < 3; ++i) {
+	for (int32_t i = 0; i < 1; ++i) {
 
 		Enemy* newEnemy = new Enemy();
-		Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(15, 18);
-		enemy_->Initialize(modelEnemy_, &viewProjection_, enemyPosition);
-		enemy_->SetMapChipField(mapChipField_);
+		Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(i, 18);
+		newEnemy->Initialize(modelEnemy_, &viewProjection_, enemyPosition);
+
+		enemies_.push_back(newEnemy);
 	}
 
 	movaleArea_ = {100.0f, -100.0f, 6.0f, 6.0f};
