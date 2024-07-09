@@ -496,3 +496,14 @@ void Player::HittingWall(const CollisionMapInfo& info) {
 		velocity_.x *= (1.0f - kAttenWall);
 	}
 }
+
+Vector3 Player::GetWorldPosition() { 
+	//ワールド座標を入れる変数
+	Vector3 worldPos;
+	//ワールド行列の平行移動成分を取得（ワールド座標）
+	worldPos.x = ワールド行列のTx;
+	worldPos.y = ワールド行列のTy;
+	worldPos.z = ワールド行列のTz;
+
+	return worldPos;
+}

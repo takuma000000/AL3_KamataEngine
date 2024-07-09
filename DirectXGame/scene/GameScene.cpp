@@ -78,11 +78,10 @@ void GameScene::Initialize() {
 	modelPlayer_ = Model::CreateFromOBJ("catCube", true);
 	modelBlock_ = Model::CreateFromOBJ("block", true);
 	modelEnemy_ = Model::CreateFromOBJ("enemy", true);
-	
 
 	skydome_ = new Skydome;
 	skydome_->Initiaize(modelSkydome_, &viewProjection_);
-	
+
 	//
 	mapChipField_ = new MapChipField();
 	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
@@ -99,11 +98,12 @@ void GameScene::Initialize() {
 	cameraController_->SetTarget(player_);
 	cameraController_->Reset();
 
-	//enemy
-	for (int32_t i = 0; i < 1; ++i) {
+	// enemy
+	for (int32_t i = 0; i < 3; ++i) {
 
 		Enemy* newEnemy = new Enemy();
-		Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(i, 18);
+		//Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(i, 18);
+		Vector3 enemyPosition = {i * 7.0f, 2.0f, 0.0f}; // 各敵のx座標を10ずつ増加
 		newEnemy->Initialize(modelEnemy_, &viewProjection_, enemyPosition);
 
 		enemies_.push_back(newEnemy);
@@ -130,11 +130,16 @@ void GameScene::Update() {
 		}
 	}
 
+	// 敵の当たり判定->更新
+	for (Enemy* enemy : enemies_) {
+		enemy->Updata();
+	}
+
 	debugCamera_->Update();
 
 	player_->Update();
 
-	enemy_->Updata();
+	
 
 #ifdef _DEBUG
 
@@ -203,10 +208,15 @@ void GameScene::Draw() {
 		}
 	}
 
+	// 敵の当たり判定->描画
+	for (Enemy* enemy : enemies_) {
+		enemy->Draw();
+	}
+
 	skydome_->Draw();
 
 	player_->Draw();
-	enemy_->Draw();
+	
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

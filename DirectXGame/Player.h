@@ -74,6 +74,9 @@ public:
 	//壁に接触している場合の処理
 	void HittingWall(const CollisionMapInfo& info);
 
+	//ワールド座標を取得
+	Vector3 GetWorldPosition();
+
 private:
 	WorldTransform worldTransform_;
 
