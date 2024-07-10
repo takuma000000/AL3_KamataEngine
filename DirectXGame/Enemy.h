@@ -19,8 +19,10 @@ public:
 	//衝突応答
 	void OnCollision(const Player* player);
 
-	
+	// ワールド座標を取得
+	Vector3 GetEnemyWorldPosition();
 
+	AABB GetEnemyAABB();
 	
 
 private:
