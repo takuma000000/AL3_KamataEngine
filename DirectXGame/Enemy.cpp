@@ -5,6 +5,7 @@
 #include "ImGuiManager.h"
 #include <cmath>
 #include <math.h>
+#include <Player.h>
 
 // Vector3 Lerp(const Vector3& a, const Vector3& b, float t) {
 //	if (t <= 0.0f) {
@@ -61,3 +62,5 @@ void Enemy::Updata() {
 }
 
 void Enemy::Draw() { model_->Draw(worldTransform_, *viewProjection_); }
+
+void Enemy::OnCollision(const Player* player) { (void)player; }

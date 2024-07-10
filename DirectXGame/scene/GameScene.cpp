@@ -64,6 +64,31 @@ void GameScene::GenerateBlocks() {
 	}
 }
 
+void GameScene::CheckAllCollisions() {
+#pragma region 自キャラと敵キャラの当たり判定
+
+	//判定対象1と2の座標
+	AABB aabb1, aabb2;
+	//自キャラの座標
+	aabb1 = player_->GetAABB();
+	//自キャラと敵弾全ての当たり判定
+	for (Enemy* enemy : enemies_) {
+		//敵弾の座標
+		aabb2 = enemy->GetAABB();
+		//AABB同士の交差判定
+		if ((aabb1.min.x <= aabb2.max.x && aabb1.max.x >= aabb2.min.x) &&
+		    (aabb1.min.y <= aabb2.max.y && aabb1.max.y >= aabb2.min.y) &&
+		    (aabb1.min.z <= aabb2.max.z && aabb1.max.z >= aabb2.min.z)) {
+			//自キャラの衝突時コールバックを呼び出す
+			player_->OnCollision(enemy);
+			//敵弾の衝突時コールバックを呼び出す
+			enemy->OnCollision(player_);
+		}
+	}
+
+#pragma endregion
+}
+
 void GameScene::Initialize() {
 
 	dxCommon_ = DirectXCommon::GetInstance();
@@ -168,6 +193,9 @@ void GameScene::Update() {
 
 	//
 	skydome_->Update();
+
+	//全ての当たり判定を行う
+	CheckAllCollisions();
 }
 
 void GameScene::Draw() {

@@ -1,6 +1,9 @@
 #pragma once
 #include "Model.h"
 #include "WorldTransform.h"
+//#include "Player.h"
+
+class Player;
 
 class MapChipField;
 
@@ -13,6 +16,13 @@ public:
 
 	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
 
+	//衝突応答
+	void OnCollision(const Player* player);
+
+	
+
+	
+
 private:
 	WorldTransform worldTransform_;
 
@@ -23,7 +33,7 @@ private:
 	// マップチップによるフィールド
 	MapChipField* mapChipField_ = nullptr;
 
-	//補講の速さ
+	//歩行の速さ
 	static inline const float kWalkSpeed = 0.02f;
 	//速度
 	Vector3 velocity_ = {};

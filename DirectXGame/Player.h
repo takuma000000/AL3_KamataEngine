@@ -13,6 +13,11 @@ struct CollisionMapInfo {
 	Vector3 isMovement;
 };
 
+struct AABB {
+	Vector3 min;
+	Vector3 max;
+};
+
 enum class LRDirection {
 	kRight,
 	kLeft,
@@ -26,6 +31,8 @@ enum Corner {
 
 	kNumCorner // 要素数
 };
+
+class Enemy;
 
 class MapChipField;
 
@@ -76,6 +83,12 @@ public:
 
 	//ワールド座標を取得
 	Vector3 GetWorldPosition();
+
+	//AABBを取得
+	AABB GetAABB();
+
+	//衝突応答
+	void OnCollision(const Enemy* enemy);
 
 private:
 	WorldTransform worldTransform_;
