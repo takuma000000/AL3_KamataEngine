@@ -95,6 +95,9 @@ private: // メンバ変数
 	//敵の複数化
 	std::list<Enemy*> enemies_;
 
+	//デスパーティクル
+
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
