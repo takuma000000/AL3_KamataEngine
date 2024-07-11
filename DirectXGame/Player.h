@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Model.h"
 #include "WorldTransform.h"
+#include "AABB.h"
 
 struct CollisionMapInfo {
 	// 天井衝突
@@ -13,10 +14,7 @@ struct CollisionMapInfo {
 	Vector3 isMovement;
 };
 
-struct AABB {
-	Vector3 min;
-	Vector3 max;
-};
+
 
 enum class LRDirection {
 	kRight,

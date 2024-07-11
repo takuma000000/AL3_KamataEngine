@@ -63,14 +63,12 @@ void Player::Update() {
 	bool landing = false;
 
 	//// 地面との当たり判定
-	//if (velocity_.y < 0) {
+	// if (velocity_.y < 0) {
 	//	// y座標が地面以下になったら着地
 	//	if (worldTransform_.translation_.y <= 1.0f) {
 	//		landing = true;
 	//	}
-	//}
-
-
+	// }
 
 	// 接地判定
 	if (onGround_) {
@@ -233,9 +231,6 @@ void Player::HitMapUp(CollisionMapInfo& info) {
 
 	// 衝突
 	CeilingContact(info);
-
-
-	
 }
 
 void Player::HitMapDown(CollisionMapInfo& info) {
@@ -286,7 +281,6 @@ void Player::HitMapDown(CollisionMapInfo& info) {
 	} else {
 		info.isLanding = false;
 	}
-
 
 	CeilingContact(info);
 }
@@ -343,7 +337,7 @@ void Player::HitMapRight(CollisionMapInfo& info) {
 }
 
 void Player::HitMapLeft(CollisionMapInfo& info) {
-	//左移動あり？
+	// 左移動あり？
 	if (info.isMovement.x <= 0) {
 		return;
 	}
@@ -387,7 +381,7 @@ void Player::HitMapLeft(CollisionMapInfo& info) {
 		MapChipField::Rect rect = mapChipField_->GetRectByIndex(indexSet7.xIndex, indexSet7.yIndex);
 		info.isMovement.y = std::max(
 		    0.0f, rect.bottom - worldTransform_.translation_.y - (kHeight / 2.0f + kBlank));
-		//壁に当たったことを判定悔過に記録する
+		// 壁に当たったことを判定悔過に記録する
 		info.isWallHit = true;
 	}
 
@@ -432,8 +426,6 @@ void Player::GroundSwitch(const CollisionMapInfo& info) {
 		if (velocity_.y > 0.0f) {
 			onGround_ = false;
 		}
-
-		
 
 		// 移動後の4つの角の座標
 		std::array<Vector3, kNumCorner> positionsNew;
@@ -491,24 +483,24 @@ void Player::GroundSwitch(const CollisionMapInfo& info) {
 }
 
 void Player::HittingWall(const CollisionMapInfo& info) {
-	//壁接触による減速
+	// 壁接触による減速
 	if (info.isWallHit) {
 		velocity_.x *= (1.0f - kAttenWall);
 	}
 }
 
-Vector3 Player::GetWorldPosition() { 
-	//ワールド座標を入れる変数
+Vector3 Player::GetWorldPosition() {
+	// ワールド座標を入れる変数
 	Vector3 worldPos;
-	//ワールド行列の平行移動成分を取得（ワールド座標）
-	worldPos.x = worldTransform_.translation_.x;
-	worldPos.y = worldTransform_.translation_.y;
-	worldPos.z = worldTransform_.translation_.z;
+	// ワールド行列の平行移動成分を取得（ワールド座標）
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
 
 	return worldPos;
 }
 
-AABB Player::GetAABB() { 
+AABB Player::GetAABB() {
 	Vector3 worldPos = GetWorldPosition();
 
 	AABB aabb;
@@ -521,8 +513,8 @@ AABB Player::GetAABB() {
 	return aabb;
 }
 
-void Player::OnCollision(const Enemy* enemy) { 
+void Player::OnCollision(const Enemy* enemy) {
 	(void)enemy;
-	//ジャンプ開始( 仮処理 )
-	velocity_ += Vector3(kJumpAcc);
+	// ジャンプ開始( 仮処理 )
+	velocity_ += Vector3(0, kJumpAcc, 0);
 }

@@ -9,6 +9,12 @@
 
 // class WorldTransform;
 
+bool IsCollision(const AABB& aabb1, const AABB& aabb2) {
+	return (aabb1.min.x <= aabb2.max.x && aabb1.max.x >= aabb2.min.x) &&
+	       (aabb1.min.y <= aabb2.max.y && aabb1.max.y >= aabb2.min.y) &&
+	       (aabb1.min.z <= aabb2.max.z && aabb1.max.z >= aabb2.min.z);
+}
+
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
@@ -76,9 +82,7 @@ void GameScene::CheckAllCollisions() {
 		//敵弾の座標
 		aabb2 = enemy->GetEnemyAABB();
 		//AABB同士の交差判定
-		if ((aabb1.min.x <= aabb2.max.x && aabb1.max.x >= aabb2.min.x) &&
-		    (aabb1.min.y <= aabb2.max.y && aabb1.max.y >= aabb2.min.y) &&
-		    (aabb1.min.z <= aabb2.max.z && aabb1.max.z >= aabb2.min.z)) {
+		if (IsCollision(aabb1,aabb2)) {
 			//自キャラの衝突時コールバックを呼び出す
 			player_->OnCollision(enemy);
 			//敵弾の衝突時コールバックを呼び出す
