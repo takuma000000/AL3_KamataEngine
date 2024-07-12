@@ -19,15 +19,14 @@ void DeathParticles::Initialize(
 void DeathParticles::Update() {
 
 	//ワールド変換の更新
-	for (std::vector<WorldTransform*>& worldTransform : worldTransform_) {
-		for (WorldTransform* worldTransform : worldTransform_) {
+	for (auto& worldTransform : worldTransform_) {
 
 			if (!worldTransform) {
 				continue;
 			}
 
-			worldTransform->UpdateMatrix();
-		}
+			
+		
 	}
 
 }
