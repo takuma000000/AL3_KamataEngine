@@ -3,6 +3,8 @@
 #include "WorldTransform.h"
 #include "array"
 
+class MapChipField;
+
 class DeathParticles {
 
 public:
@@ -12,6 +14,8 @@ public:
 	void Update();
 
 	void Draw();
+
+	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
 
 private:
 
@@ -23,5 +27,8 @@ private:
 	static inline const uint32_t kNumParticles = 8;
 
 	std::array<WorldTransform, kNumParticles> worldTransform_;
+
+	// マップチップによるフィールド
+	MapChipField* mapChipField_ = nullptr;
 
 };

@@ -42,6 +42,11 @@ GameScene::~GameScene() {
 	delete modelBlock_;
 	delete enemy_;
 	delete modelEnemy_;
+
+
+
+	delete deathParticles_;
+	delete modelDeathParticles_;
 }
 
 void GameScene::GenerateBlocks() {
@@ -107,6 +112,7 @@ void GameScene::Initialize() {
 	modelPlayer_ = Model::CreateFromOBJ("catCube", true);
 	modelBlock_ = Model::CreateFromOBJ("block", true);
 	modelEnemy_ = Model::CreateFromOBJ("enemy", true);
+	modelDeathParticles_ = Model::CreateFromOBJ("deathParticle", true);
 
 	skydome_ = new Skydome;
 	skydome_->Initiaize(modelSkydome_, &viewProjection_);
@@ -126,6 +132,12 @@ void GameScene::Initialize() {
 	cameraController_->Initialize();
 	cameraController_->SetTarget(player_);
 	cameraController_->Reset();
+
+	//デスパーティクル
+	deathParticles_ = new DeathParticles();
+	Vector3 deathPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
+	deathParticles_->Initialize(modelDeathParticles_, &viewProjection_, deathPosition);
+	deathParticles_->SetMapChipField(mapChipField_);
 
 	// enemy
 	for (int32_t i = 0; i < 3; ++i) {

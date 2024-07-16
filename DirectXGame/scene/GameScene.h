@@ -15,6 +15,7 @@
 #include "Player.h"
 #include "CameraController.h"
 #include "Enemy.h"
+#include "DeathParticles.h"
 
 /// <summary>
 /// ゲームシーン
@@ -96,7 +97,9 @@ private: // メンバ変数
 	std::list<Enemy*> enemies_;
 
 	//デスパーティクル
+	DeathParticles* deathParticles_;
 
+	Model* modelDeathParticles_;
 
 	/// <summary>
 	/// ゲームシーン用
