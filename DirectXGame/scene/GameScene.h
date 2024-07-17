@@ -97,7 +97,7 @@ private: // メンバ変数
 	std::list<Enemy*> enemies_;
 
 	//デスパーティクル
-	DeathParticles* deathParticles_;
+	DeathParticles* deathParticles_ = nullptr;
 
 	Model* modelDeathParticles_;
 

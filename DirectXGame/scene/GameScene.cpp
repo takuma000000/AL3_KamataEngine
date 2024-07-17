@@ -43,8 +43,6 @@ GameScene::~GameScene() {
 	delete enemy_;
 	delete modelEnemy_;
 
-
-
 	delete deathParticles_;
 	delete modelDeathParticles_;
 }
@@ -78,19 +76,19 @@ void GameScene::GenerateBlocks() {
 void GameScene::CheckAllCollisions() {
 #pragma region 自キャラと敵キャラの当たり判定
 
-	//判定対象1と2の座標
+	// 判定対象1と2の座標
 	AABB aabb1, aabb2;
-	//自キャラの座標
+	// 自キャラの座標
 	aabb1 = player_->GetAABB();
-	//自キャラと敵弾全ての当たり判定
+	// 自キャラと敵弾全ての当たり判定
 	for (Enemy* enemy : enemies_) {
-		//敵弾の座標
+		// 敵弾の座標
 		aabb2 = enemy->GetEnemyAABB();
-		//AABB同士の交差判定
-		if (IsCollision(aabb1,aabb2)) {
-			//自キャラの衝突時コールバックを呼び出す
+		// AABB同士の交差判定
+		if (IsCollision(aabb1, aabb2)) {
+			// 自キャラの衝突時コールバックを呼び出す
 			player_->OnCollision(enemy);
-			//敵弾の衝突時コールバックを呼び出す
+			// 敵弾の衝突時コールバックを呼び出す
 			enemy->OnCollision(player_);
 		}
 	}
@@ -133,17 +131,17 @@ void GameScene::Initialize() {
 	cameraController_->SetTarget(player_);
 	cameraController_->Reset();
 
-	//デスパーティクル
-	deathParticles_ = new DeathParticles();
+	// デスパーティクル
+	deathParticles_ = new DeathParticles;
 	Vector3 deathPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
 	deathParticles_->Initialize(modelDeathParticles_, &viewProjection_, deathPosition);
-	deathParticles_->SetMapChipField(mapChipField_);
+	// deathParticles_->SetMapChipField(mapChipField_);
 
 	// enemy
 	for (int32_t i = 0; i < 3; ++i) {
 
 		Enemy* newEnemy = new Enemy();
-		//Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(i, 18);
+		// Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(i, 18);
 		Vector3 enemyPosition = {i * 7.0f, 2.0f, 0.0f}; // 各敵のx座標を10ずつ増加
 		newEnemy->Initialize(modelEnemy_, &viewProjection_, enemyPosition);
 
@@ -180,8 +178,6 @@ void GameScene::Update() {
 
 	player_->Update();
 
-	
-
 #ifdef _DEBUG
 
 	if (input_->TriggerKey(DIK_SPACE)) {
@@ -210,8 +206,13 @@ void GameScene::Update() {
 	//
 	skydome_->Update();
 
-	//全ての当たり判定を行う
+	// 全ての当たり判定を行う
 	CheckAllCollisions();
+
+	if (deathParticles_ != nullptr) {
+
+		deathParticles_->Update();
+	}
 }
 
 void GameScene::Draw() {
@@ -260,7 +261,15 @@ void GameScene::Draw() {
 	skydome_->Draw();
 
 	player_->Draw();
-	
+
+
+
+
+	if (deathParticles_ != nullptr) {
+
+		deathParticles_->Draw();
+
+	}
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
