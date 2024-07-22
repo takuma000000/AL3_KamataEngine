@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Audio.h"
 #include "DirectXCommon.h"
 #include "Input.h"
@@ -16,6 +15,12 @@
 #include "CameraController.h"
 #include "Enemy.h"
 #include "DeathParticles.h"
+
+enum class Phase {
+	kPlay,
+	kDeath,
+};
+
 
 /// <summary>
 /// ゲームシーン
@@ -52,6 +57,8 @@ public: // メンバ関数
 
 	//全ての当たり判定を行う
 	void CheckAllCollisions();
+
+	//void ChangePhase();
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -100,6 +107,8 @@ private: // メンバ変数
 	DeathParticles* deathParticles_ = nullptr;
 
 	Model* modelDeathParticles_;
+
+	Phase phase_;
 
 	/// <summary>
 	/// ゲームシーン用
