@@ -138,7 +138,7 @@ void GameScene::Initialize() {
 	// deathParticles_->SetMapChipField(mapChipField_);
 
 	// enemy
-	for (int32_t i = 0; i < 3; ++i) {
+	for (int32_t i = 0; i < 10; ++i) {
 
 		Enemy* newEnemy = new Enemy();
 		// Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(i, 18);
