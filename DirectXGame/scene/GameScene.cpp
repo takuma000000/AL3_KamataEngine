@@ -315,12 +315,13 @@ void GameScene::Draw() {
 	}
 
 	skydome_->Draw();
-
-	player_->Draw();
+	deathParticles_->Draw();
+	
 
 	switch (phase_) { 
 	case Phase::kPlay:
-		deathParticles_->Draw();
+		
+		player_->Draw();
 		break;
 
 	case Phase::kDeath:
