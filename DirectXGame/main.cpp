@@ -5,7 +5,8 @@
 #include "ImGuiManager.h"
 #include "PrimitiveDrawer.h"
 #include "TextureManager.h"
-#include "WinApp.h"	
+#include "WinApp.h"
+#include "TitleScene.h"
 
 
 // Windowsアプリでのエントリーポイント(main関数)
@@ -19,6 +20,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	PrimitiveDrawer* primitiveDrawer = nullptr;
 	GameScene* gameScene = nullptr;
 
+	TitleScene* titleScene = nullptr;
+	delete titleScene;
+
 	// ゲームウィンドウの作成
 	win = WinApp::GetInstance();
 	win->CreateGameWindow(L"LE2C_08_オカムラ_タクマ_AL3");
@@ -26,6 +30,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// DirectX初期化処理
 	dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Initialize(win);
+
+	titleScene = new TitleScene;
+	titleScene->Initialize();
 
 #pragma region 汎用機能初期化
 	// ImGuiの初期化
@@ -77,6 +84,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		gameScene->Update();
 		// 軸表示の更新
 		axisIndicator->Update();
+
+		titleScene->Update();
+
 		// ImGui受付終了
 		imguiManager->End();
 
@@ -90,6 +100,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		primitiveDrawer->Reset();
 		// ImGui描画
 		imguiManager->Draw();
+
+		titleScene->Draw();
+
 		// 描画終了
 		dxCommon->PostDraw();
 	}
