@@ -58,7 +58,10 @@ public: // メンバ関数
 	//全ての当たり判定を行う
 	void CheckAllCollisions();
 
-	//void ChangePhase();
+	//デスフラグのGetter
+	bool IsFinished() const { return finished_; }
+
+	void changePhase();
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -109,6 +112,9 @@ private: // メンバ変数
 	Model* modelDeathParticles_;
 
 	Phase phase_;
+
+	//終了フラグ
+	bool finished_ = false;
 
 	/// <summary>
 	/// ゲームシーン用

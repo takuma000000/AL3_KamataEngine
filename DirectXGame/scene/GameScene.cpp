@@ -96,6 +96,31 @@ void GameScene::CheckAllCollisions() {
 #pragma endregion
 }
 
+void GameScene::changePhase() {
+
+	switch (phase_) {
+	case Phase::kPlay:
+		if (player_->IsDead()) {
+			// 死亡演出フェーズに切り替え
+			phase_ = Phase::kDeath;
+			// 自キャラの座標を取得
+			const Vector3& deathParticlesPosition = player_->GetWorldPosition();
+
+			deathParticles_ = new DeathParticles;
+			Vector3 deathPosition = deathParticlesPosition;
+			deathParticles_->Initialize(modelDeathParticles_, &viewProjection_, deathPosition);
+		}
+		break;
+	case Phase::kDeath:
+
+		// デス演出フェーズの処理
+		if (deathParticles_ && deathParticles_->IsFinished()) {
+			finished_ = true;
+		}
+		break;
+	}
+}
+
 void GameScene::Initialize() {
 
 	dxCommon_ = DirectXCommon::GetInstance();
@@ -161,20 +186,10 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 
 	//
+	changePhase();
 
 	switch (phase_) {
 	case Phase::kPlay:
-
-		if (player_->IsDead()) {
-			// 死亡演出フェーズに切り替え
-			phase_ = Phase::kDeath;
-			// 自キャラの座標を取得
-			const Vector3& deathParticlesPosition = player_->GetWorldPosition();
-
-			deathParticles_ = new DeathParticles;
-			Vector3 deathPosition = deathParticlesPosition;
-			deathParticles_->Initialize(modelDeathParticles_, &viewProjection_, deathPosition);
-		}
 
 		skydome_->Update();
 		player_->Update();
@@ -200,7 +215,7 @@ void GameScene::Update() {
 
 #ifdef _DEBUG
 
-		if (input_->TriggerKey(DIK_SPACE)) {
+		if (input_->TriggerKey(DIK_Z)) {
 
 			isDebugCameraActive_ = true;
 		}
@@ -250,7 +265,7 @@ void GameScene::Update() {
 
 #ifdef _DEBUG
 
-		if (input_->TriggerKey(DIK_SPACE)) {
+		if (input_->TriggerKey(DIK_Z)) {
 
 			isDebugCameraActive_ = true;
 		}
@@ -266,6 +281,8 @@ void GameScene::Update() {
 				worldTransformBlock->UpdateMatrix();
 			}
 		}
+
+		
 
 		break;
 	}
@@ -316,25 +333,19 @@ void GameScene::Draw() {
 
 	skydome_->Draw();
 	deathParticles_->Draw();
-	
 
-	switch (phase_) { 
+	switch (phase_) {
 	case Phase::kPlay:
-		
+
 		player_->Draw();
 		break;
 
 	case Phase::kDeath:
 
-
-
 		break;
 	}
 
-	
-
-		deathParticles_->Draw();
-	
+	deathParticles_->Draw();
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
