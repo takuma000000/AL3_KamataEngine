@@ -114,18 +114,27 @@ void GameScene::changePhase() {
 	case Phase::kDeath:
 
 		// デス演出フェーズの処理
-		if (deathParticles_ && deathParticles_->IsFinished()) {
+		if (//deathParticles_ && 
+			deathParticles_->IsFinished()) {
 			finished_ = true;
 		}
 		break;
 	}
+
+	
+
+
 }
 
 void GameScene::Initialize() {
 
+	
+
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+
+	
 
 	model_ = Model::Create();
 
@@ -185,9 +194,6 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 
-	//
-	changePhase();
-
 	switch (phase_) {
 	case Phase::kPlay:
 
@@ -243,10 +249,10 @@ void GameScene::Update() {
 		for (Enemy* enemy : enemies_) {
 			enemy->Updata();
 		}
-		if (deathParticles_ != nullptr) {
+		//if (deathParticles_ != nullptr) {
 
 			deathParticles_->Update();
-		}
+		//}
 
 		debugCamera_->Update();
 		if (isDebugCameraActive_) {
@@ -286,6 +292,8 @@ void GameScene::Update() {
 
 		break;
 	}
+
+	changePhase();
 }
 
 void GameScene::Draw() {

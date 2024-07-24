@@ -9,6 +9,8 @@
 #include "TitleScene.h"
 
 
+
+
 GameScene* gameScene = nullptr;
 TitleScene* titleScene = nullptr;
 
@@ -19,8 +21,22 @@ enum class Scene {
 	kGame,
 };
 
+
 //現在シーン型
 Scene scene = Scene::kUnknown;
+
+// Behavior 型を文字列に変換する関数
+const char* SceneA(Scene scene_) {
+	switch (scene_) {
+	case Scene::kTitle:
+		return "title";
+	case Scene::kGame:
+		return "game";
+	// 他の状態を追加
+	default:
+		return "Unknown";
+	}
+}
 
 void ChangeScene();
 void UpdateScene();
@@ -106,9 +122,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 軸表示の更新
 		axisIndicator->Update();
 
-		UpdateScene();
-		ChangeScene();
 		
+		ChangeScene();
+		UpdateScene();
+		
+		ImGui::Text("Current Behavior: %s", SceneA(scene));
 
 		// ImGui受付終了
 		imguiManager->End();

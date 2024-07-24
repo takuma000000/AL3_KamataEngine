@@ -19,7 +19,7 @@ public:
 	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
 
 	// デスフラグのGetter
-	bool IsFinished() const { return finished_; }
+	bool IsFinished() const { return isFinished_; }
 
 private:
 
@@ -49,7 +49,7 @@ private:
 	float counter_ = 0.0f;
 
 	// 終了フラグ
-	bool finished_ = false;
+	//bool finished_ = false;
 
 	//色変更オブジェクト
 	//ObjectColor objectColor_;

@@ -2,6 +2,7 @@
 #include "WorldTransform.h"
 #include <cassert>
 #include <cmath>
+#include "ImGui.h"
 
 
 Matrix4x4 MakeScaleMatrix(const Vector3& scale) {
@@ -201,9 +202,9 @@ void DeathParticles::Initialize(
 void DeathParticles::Update() {
 
 	// 終了ならなにもしない
-	if (isFinished_) {
+	/*if (isFinished_) {
 		return;
-	}
+	}*/
 
 	// ワールド変換の更新
 	for (auto& worldTransform : worldTransform_) {
@@ -234,7 +235,10 @@ void DeathParticles::Update() {
 		isFinished_ = true;
 	}
 
-	
+	ImGui::Begin("AAA");
+	ImGui::Checkbox("isFinished", &isFinished_);
+	ImGui::End();
+
 }
 
 void DeathParticles::Draw() {
