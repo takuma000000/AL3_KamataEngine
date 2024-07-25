@@ -235,9 +235,7 @@ void DeathParticles::Update() {
 		isFinished_ = true;
 	}
 
-	ImGui::Begin("AAA");
-	ImGui::Checkbox("isFinished", &isFinished_);
-	ImGui::End();
+	
 
 }
 
