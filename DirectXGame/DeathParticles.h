@@ -28,7 +28,7 @@ private:
 	Model* model_ = nullptr;
 
 	//パーティクルの個数
-	static inline const uint32_t kNumParticles = 8;
+	static inline const uint32_t kNumParticles = 6;
 
 	std::array<WorldTransform, kNumParticles> worldTransform_;
 
