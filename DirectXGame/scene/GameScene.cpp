@@ -21,7 +21,6 @@ void GameScene::Initialize() {
 
 	model_ = Model::Create();
 
-	//worldTransform_.Initialize();
 	viewProjection_.Initialize();
 
 	player_ = new Player();
