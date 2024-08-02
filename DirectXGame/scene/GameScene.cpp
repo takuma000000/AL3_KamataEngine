@@ -27,11 +27,8 @@ void GameScene::Initialize() {
 	player_ = new Player();
 	player_->Initialize(model_, textureHandle_, &viewProjection_);
 
-	//画面横幅
-	const float width = 70.0f;
-	const float height = 40.0f;
 	//デバッグカメラの生成
-	debugCamera_ = new DebugCamera(width, height);
+	debugCamera_ = new DebugCamera(1280, 720);
 
 }
 
@@ -43,6 +40,14 @@ void GameScene::Update() {
 	if (isDebugCameraActive_) {
 		// デバッグカメラの更新
 		debugCamera_->Update();
+		viewProjection_.matView = debugCamera_->GetView();
+		viewProjection_.matProjection = debugCamera_->GetProjection();
+
+		//ビュープロジェクション行列の転送
+		viewProjection_.TransferMatrix();
+	} else {
+		//ビュープロジェクション行列の更新と転送
+		viewProjection_.UpdateMatrix();
 	}
 
 #ifdef _DEBUG
