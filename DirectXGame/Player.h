@@ -2,7 +2,6 @@
 #include "Input.h"
 #include "WorldTransform.h"
 #include "Model.h"
-#include "MyMath.h"
 
 class Player {
 

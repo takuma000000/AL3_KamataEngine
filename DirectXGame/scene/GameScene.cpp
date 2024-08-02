@@ -8,6 +8,7 @@ GameScene::~GameScene() {
 
 	delete model_;
 	delete player_;
+	delete debugCamera_;
 
 }
 
@@ -26,11 +27,31 @@ void GameScene::Initialize() {
 	player_ = new Player();
 	player_->Initialize(model_, textureHandle_, &viewProjection_);
 
+	//画面横幅
+	const float width = 70.0f;
+	const float height = 40.0f;
+	//デバッグカメラの生成
+	debugCamera_ = new DebugCamera(width, height);
+
 }
 
 void GameScene::Update() {
 
 	player_->Update();
+	
+	/// カメラの処理
+	if (isDebugCameraActive_) {
+		// デバッグカメラの更新
+		debugCamera_->Update();
+	}
+
+#ifdef _DEBUG
+
+	if (input_->TriggerKey(DIK_SPACE)) {
+		isDebugCameraActive_ = true;
+	}
+
+#endif // _DEBUG
 
 }
 

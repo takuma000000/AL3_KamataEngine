@@ -7,6 +7,13 @@
 #include "Vector3.h"
 #include "Matrix4x4.h"
 
+
+/// <summary>
+/// 4x4行列
+/// </summary>
+
+
+
 Vector3 Add(const Vector3& v1, const Vector3& v2) {
 	Vector3 result;
 	result.x = v1.x + v2.x;
@@ -113,7 +120,7 @@ Matrix4x4 MakeRotateZMatrix(float radian) {
 	rotationMatrix.m[1][2] = 0.0f;
 	rotationMatrix.m[1][3] = 0.0f;
 	rotationMatrix.m[2][0] = 0.0f;
-	rotationMatrix.m[2][1] = 0.0f;
+	rotationMatrix.m[  2][1] = 0.0f;
 	rotationMatrix.m[2][2] = 1.0f;
 	rotationMatrix.m[2][3] = 0.0f;
 	rotationMatrix.m[3][0] = 0.0f;
@@ -129,6 +136,7 @@ float Length(const Vector3& v) { return std::sqrt(v.x * v.x + v.y * v.y + v.z * 
 Vector3 Normalize(const Vector3& v) {
 	float length = Length(v);
 	if (length == 0) {
+
 		// 長さが0の場合、正規化できないので元のベクトルを返すか、エラーを処理する
 		return v;
 	}

@@ -8,7 +8,6 @@ struct Vector3 final {
 	float y;
 	float z;
 
-	
 	float lengthSquared() const { return x * x + y * y + z * z; }
 
 	// ベクトルの内積を計算する
