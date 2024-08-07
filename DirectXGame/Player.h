@@ -4,6 +4,8 @@
 #include "Model.h"
 #include "PlayerBullet.h"
 
+#include <memory>
+
 class Player {
 
 public:
@@ -20,6 +22,10 @@ public:
 
 	//攻撃
 	void Attack();
+
+
+	Player();
+	~Player();
 
 private:
 

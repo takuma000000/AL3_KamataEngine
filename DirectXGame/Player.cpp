@@ -85,7 +85,7 @@ void Player::Rotate() {
 }
 
 void Player::UpdateMatrix() {
-	worldTransform_.matWorld_ = MakeAffineMatrix(
+	worldTransform_.matWorld_ = MyMath::MakeAffineMatrix(
 	    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 	// 定数バッファに転送する
 	worldTransform_.TransferMatrix();
@@ -102,3 +102,7 @@ void Player::Attack() {
 		bullet_ = newBullet;
 	}
 }
+
+Player::Player() {}
+
+Player::~Player() { delete bullet_; }
