@@ -18,8 +18,17 @@ void Player::Initialize(Model* model, uint32_t textureHandle, ViewProjection* vi
 
 void Player::Update() {
 
-	// キャラの移動ベクトル
-	Vector3 move = {0, 0, 0};
+	// デスフラグの立った弾を削除
+	bullets_.remove_if([](PlayerBullet* bullet) {
+		if (bullet->isDead()) {
+			delete bullet;
+			return true;
+		}
+		return false;
+	});
+
+	    // キャラの移動ベクトル
+	    Vector3 move = {0, 0, 0};
 	// キャラの移動速度
 	const float kCharaSpeed = 0.2f;
 
@@ -50,9 +59,9 @@ void Player::Update() {
 	worldTransform_.translation_ += move;
 	worldTransform_.UpdateMatrix();
 
-	//キャラクター攻撃処理
+	// キャラクター攻撃処理
 	Attack();
-	//弾の更新
+	// 弾の更新
 	for (PlayerBullet* bullet : bullets_) {
 		bullet->Update();
 	}
@@ -60,13 +69,14 @@ void Player::Update() {
 	// キャラクターの座標を表示する処理
 	ImGui::Begin("chara");
 	ImGui::DragFloat3("translation", &worldTransform_.translation_.x, 0.01f);
+	ImGui::DragFloat3("rotate", &worldTransform_.rotation_.x, 0.01f);
 	ImGui::End();
 }
 
-void Player::Draw(ViewProjection& viewProjection) { 
-	model_->Draw(worldTransform_, viewProjection, textureHandle_); 
+void Player::Draw(ViewProjection& viewProjection) {
+	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 
-	//弾の描画
+	// 弾の描画
 	for (PlayerBullet* bullet : bullets_) {
 		bullet->Draw(viewProjection);
 	}
@@ -92,21 +102,28 @@ void Player::UpdateMatrix() {
 }
 
 void Player::Attack() {
-	//Zキーをトリガーしたら発射
+	// Zキーをトリガーしたら発射
 	if (input_->PushKey(DIK_Z)) {
 
-		//弾を生成し、初期化
-		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, worldTransform_.translation_);
+		// 弾の速度
+		const float kBulletSpeed = 1.0f;
+		Vector3 velocity(0, 0, kBulletSpeed);
 
-		//弾を登録する
+		// 速度ベクトルを自機の向きに合わせて回転させる
+		velocity = MyMath::TransformNormal(velocity, worldTransform_.matWorld_);
+
+		// 弾を生成し、初期化
+		PlayerBullet* newBullet = new PlayerBullet();
+		newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+
+		// 弾を登録する
 		bullets_.push_back(newBullet);
 	}
 }
 
 Player::Player() {}
 
-Player::~Player() { 
+Player::~Player() {
 	for (PlayerBullet* bullet : bullets_) {
 		delete bullet;
 	}
