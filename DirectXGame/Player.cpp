@@ -27,8 +27,8 @@ void Player::Update() {
 		return false;
 	});
 
-	    // キャラの移動ベクトル
-	    Vector3 move = {0, 0, 0};
+	// キャラの移動ベクトル
+	Vector3 move = {0, 0, 0};
 	// キャラの移動速度
 	const float kCharaSpeed = 0.2f;
 
