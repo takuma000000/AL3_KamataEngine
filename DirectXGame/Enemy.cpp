@@ -2,6 +2,7 @@
 #include "MyMath.h"
 #include "cassert"
 #include "ImGuiManager.h"
+#include "Player.h"
 
 void Enemy::Initialize(Model* model, uint32_t textureHandle, ViewProjection* viewProjection) {
 
@@ -87,7 +88,18 @@ void Enemy::Fire() {
 
 	// 弾の速度
 	const float kBulletSpeed = 1.0f;
-	Vector3 velocity(0, 0, -kBulletSpeed);
+	//Vector3 velocity(0, 0, -kBulletSpeed);
+
+	//自キャラのワールド座標を取得する
+	Vector3 playerWorldPos = player_->GetWorldPosition();
+	//敵キャラのワールド座標を取得する
+	Vector3 enemyWorldPos = GetWorldPosition();
+	//敵キャラから自キャラへの差分ベクトルを求める
+	Vector3 diff = playerWorldPos - enemyWorldPos;
+	//ベクトルの正規化
+	Vector3 direction = MyMath::Normalize(diff);
+	//ベクトルの長さを、速さに合わせる
+	Vector3 velocity = direction * kBulletSpeed;
 
 	// 速度ベクトルを自機の向きに合わせて回転させる
 	velocity = MyMath::TransformNormal(velocity, worldTransform_.matWorld_);
