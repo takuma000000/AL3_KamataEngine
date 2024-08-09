@@ -28,6 +28,9 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle, ViewProjection* vie
 
 void Enemy::Update() {
 
+	// 接近フェーズ更新
+	ApproachUpdate();
+
 	// デスフラグの立った弾を削除
 	bullets_.remove_if([](EnemyBullet* bullet) {
 		if (bullet->isDead()) {
@@ -41,9 +44,6 @@ void Enemy::Update() {
 	Vector3 approachVelocity = {0.0f, 0.0f, -0.05f};
 	//離脱速度
 	Vector3 leaveVelocity = {-0.1f, -0.1f, 0.0f};
-
-	// ワールドトランスフォームの更新
-	worldTransform_.UpdateMatrix();
 
 	//switch文による実装
 	switch (phase_) { 
@@ -67,8 +67,8 @@ void Enemy::Update() {
 		bullet->Update();
 	}
 
-	// 接近フェーズ更新
-	ApproachUpdate();
+	// ワールドトランスフォームの更新
+	worldTransform_.UpdateMatrix();
 
 }
 
