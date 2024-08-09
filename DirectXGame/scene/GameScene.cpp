@@ -10,6 +10,7 @@ GameScene::~GameScene() {
 	delete model_;
 	delete player_;
 	delete debugCamera_;
+	delete enemy_;
 }
 
 void GameScene::Initialize() {
@@ -19,6 +20,7 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 
 	textureHandle_ = TextureManager::Load("sample.png");
+	enemyTextureHandle_ = TextureManager::Load("mario_yosshi.jpg");
 
 	model_ = Model::Create();
 
@@ -28,7 +30,7 @@ void GameScene::Initialize() {
 	player_->Initialize(model_, textureHandle_, &viewProjection_);
 
 	enemy_ = new Enemy();
-	enemy_->Initialize(model_,)
+	enemy_->Initialize(model_, enemyTextureHandle_, &viewProjection_);
 
 	// デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
@@ -42,6 +44,9 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 
 	player_->Update();
+	if (enemy_ != nullptr) {
+		enemy_->Update();
+	}
 
 	/// カメラの処理
 	if (isDebugCameraActive_) {
@@ -95,6 +100,9 @@ void GameScene::Draw() {
 	/// </summary>
 
 	player_->Draw(viewProjection_);
+	if (enemy_ != nullptr) {
+		enemy_->Draw(viewProjection_);
+	}
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

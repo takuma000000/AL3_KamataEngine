@@ -11,6 +11,7 @@
 #include "Player.h"
 #include "DebugCamera.h"
 #include "Enemy.h"
+#include "Vector3.h"
 
 
 /// <summary>
@@ -66,6 +67,10 @@ private: // メンバ変数
 	bool isDebugCameraActive_ = false;
 	//デバッグカメラ
 	DebugCamera* debugCamera_ = nullptr;
+
+	// 速度
+	Vector3 velocity_;
+	uint32_t enemyTextureHandle_ = 0;
 
 	/// <summary>
 	/// ゲームシーン用

@@ -6,7 +6,7 @@ class Enemy {
 
 public:
 
-	void Initialize(Model* model, const Vector3& position, const Vector3& velocity);
+	void Initialize(Model* model, uint32_t textureHandle, ViewProjection* viewProjection);
 
 	void Update();
 
@@ -21,8 +21,5 @@ private:
 	Model* model_ = nullptr;
 
 	uint32_t textureHandle_ = 0u;
-
-	// ‘¬“x
-	Vector3 velocity_;
 
 };

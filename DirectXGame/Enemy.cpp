@@ -2,33 +2,29 @@
 #include "MyMath.h"
 #include "cassert"
 
-void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& velocity) {
+void Enemy::Initialize(Model* model, uint32_t textureHandle, ViewProjection* viewProjection) {
 
-	// NULLƒ|ƒCƒ“ƒ^ƒ`ƒFƒbƒN
 	assert(model);
+
 	model_ = model;
-
-	// ƒeƒNƒXƒ`ƒƒ“Ç‚Ýž‚Ý
-	textureHandle_ = TextureManager::Load("enemy.jpg");
-
-	// ƒ[ƒ‹ƒhƒgƒ‰ƒ“ƒXƒtƒH[ƒ€‚Ì‰Šú‰»
+	textureHandle_ = textureHandle;
+	viewProjection_ = viewProjection;
 	worldTransform_.Initialize();
-	// ˆø”‚ÅŽó‚¯Žæ‚Á‚½‰ŠúÀ•W‚ðƒŠƒZƒbƒg
-	worldTransform_.translation_ = {position.x, position.y, position.z};
-
-	// ˆø”‚ÅŽó‚¯Žæ‚Á‚½‘¬“x‚ðƒƒ“ƒo•Ï”‚É‘ã“ü
-	velocity_ = Vector3{velocity.x, velocity.y, velocity.z};
 
 }
 
 void Enemy::Update() {
 
-	// ƒ[ƒ‹ƒhƒgƒ‰ƒ“ƒXƒtƒH[ƒ€‚ÌXV
+	//é€Ÿåº¦ã‚’æ±ºã‚ã¦åŠ ç®—
+	Vector3 velocity = {0.0f, 0.0f, -0.1f};
+	worldTransform_.translation_ += velocity;
+
+	// ãƒ¯ãƒ¼ãƒ«ãƒ‰ãƒˆãƒ©ãƒ³ã‚¹ãƒ•ã‚©ãƒ¼ãƒ ã®æ›´æ–°
 	worldTransform_.UpdateMatrix();
 
 }
 
 void Enemy::Draw(const ViewProjection& viewProjection) {
-	// ƒ‚ƒfƒ‹‚Ì•`‰æ
+	// ãƒ¢ãƒ‡ãƒ«ã®æç”»	
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 }
