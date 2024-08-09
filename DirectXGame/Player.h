@@ -1,16 +1,15 @@
 #pragma once
 #include "Input.h"
-#include "WorldTransform.h"
 #include "Model.h"
 #include "PlayerBullet.h"
+#include "WorldTransform.h"
 #include <list>
 #include <memory>
 
 class Player {
 
 public:
-
-	void Initialize(Model *model,uint32_t textureHandle,ViewProjection* viewProjection);
+	void Initialize(Model* model, uint32_t textureHandle, ViewProjection* viewProjection);
 
 	void Update();
 
@@ -20,15 +19,16 @@ public:
 
 	void UpdateMatrix();
 
-	//攻撃
+	// 攻撃
 	void Attack();
-
 
 	Player();
 	~Player();
 
-private:
+	//ワールド座標を取得
+	Vector3 GetWorldPosition();
 
+private:
 	WorldTransform worldTransform_;
 
 	ViewProjection* viewProjection_ = nullptr;
@@ -37,10 +37,9 @@ private:
 
 	uint32_t textureHandle_ = 0u;
 
-	//キーボード入力
+	// キーボード入力
 	Input* input_ = nullptr;
 
-	//弾
+	// 弾
 	std::list<PlayerBullet*> bullets_;
-	
 };

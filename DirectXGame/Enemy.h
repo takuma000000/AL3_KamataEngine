@@ -1,9 +1,13 @@
 #pragma once
+#include "EnemyBullet.h"
+#include "Input.h"
 #include "Model.h"
 #include "WorldTransform.h"
-#include "EnemyBullet.h"
 #include <list>
-#include "Input.h"
+#include "Vector3.h"
+
+// 自機クラスの前方処理
+class Player;
 
 enum class Phase {
 	Approach, // 接近する
@@ -19,19 +23,23 @@ public:
 
 	void Draw(const ViewProjection& viewProjection);
 
-	//弾発射
+	// 弾発射
 	void Fire();
 
 	Enemy();
 	~Enemy();
 
-	//発射間隔
+	// 発射間隔
 	static const int kFireInterval = 60;
 
-	//接近フェーズ初期化
+	// 接近フェーズ初期化
 	void ApproachInitialize();
-	//接近フェーズ更新
+	// 接近フェーズ更新
 	void ApproachUpdate();
+
+	void SetPlayer(Player* player) { player_ = player; }
+
+	Vector3 GetWorldPosition();
 
 private:
 	WorldTransform worldTransform_;
@@ -47,7 +55,10 @@ private:
 
 	// 弾
 	std::list<EnemyBullet*> bullets_;
-	
-	//発射タイマー
+
+	// 発射タイマー
 	int32_t fireTimer = 0;
+
+	// 自キャラ
+	Player* player_ = nullptr;
 };

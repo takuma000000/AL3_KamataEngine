@@ -83,6 +83,8 @@ void Enemy::Draw(const ViewProjection& viewProjection) {
 }
 
 void Enemy::Fire() {
+	assert(player_);
+
 	// 弾の速度
 	const float kBulletSpeed = 1.0f;
 	Vector3 velocity(0, 0, -kBulletSpeed);
@@ -121,4 +123,15 @@ void Enemy::ApproachUpdate() {
 		//発射タイマーを初期化
 		fireTimer = kFireInterval;
 	}
+}
+
+Vector3 Enemy::GetWorldPosition() { 
+	//ワールド座標を入れる変数
+	Vector3 worldPos;
+	//ワールド行列の平行移動成分を取得( ワールド座標 )
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+
+	return worldPos;
 }
