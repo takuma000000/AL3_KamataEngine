@@ -12,6 +12,8 @@ GameScene::~GameScene() {
 	delete player_;
 	delete debugCamera_;
 	delete enemy_;
+	delete skydome_;
+	delete modelSkydome_;
 }
 
 void GameScene::Initialize() {
@@ -42,6 +44,13 @@ void GameScene::Initialize() {
 	AxisIndicator::GetInstance()->SetVisible(true);
 	// 軸方向表示が参照するビュープロジェクションを指定する( アドレス渡し )
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
+
+	// 天球の3Dモデルの生成
+	modelSkydome_ = Model::CreateFromOBJ("SkyDome", true);
+	//天球
+	skydome_ = new skydome;
+	skydome_->Initialize(modelSkydome_, &viewProjection_);
+
 }
 
 void GameScene::Update() {
@@ -74,6 +83,9 @@ void GameScene::Update() {
 	}
 
 #endif // _DEBUG
+
+	//天球
+	skydome_->Update();
 }
 
 void GameScene::Draw() {
@@ -108,6 +120,9 @@ void GameScene::Draw() {
 	if (enemy_ != nullptr) {
 		enemy_->Draw(viewProjection_);
 	}
+
+	//天球
+	skydome_->Draw();
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

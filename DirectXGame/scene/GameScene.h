@@ -12,13 +12,11 @@
 #include "DebugCamera.h"
 #include "Enemy.h"
 #include "Vector3.h"
-
+#include "skydome.h"
 
 /// <summary>
 /// ゲームシーン
 /// </summary>
-
-
 
 class GameScene {
 
@@ -74,6 +72,12 @@ private: // メンバ変数
 	// 速度
 	Vector3 velocity_;
 	uint32_t enemyTextureHandle_ = 0;
+	
+	//天球
+	skydome* skydome_ = nullptr;
+
+	//3Dモデル 天球
+	Model* modelSkydome_ = nullptr;
 
 	/// <summary>
 	/// ゲームシーン用
