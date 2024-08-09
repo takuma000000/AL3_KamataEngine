@@ -18,7 +18,7 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle, ViewProjection* vie
 	//Y座標を指定
 	worldTransform_.translation_.y = 5.0f;
 	//Z座標を指定
-	worldTransform_.translation_.z = 10.0f;
+	worldTransform_.translation_.z = 20.0f;
 
 	// 弾発射
 	//Fire();
@@ -42,7 +42,7 @@ void Enemy::Update() {
 	});
 
 	//接近速度
-	Vector3 approachVelocity = {0.0f, 0.0f, -0.05f};
+	Vector3 approachVelocity = {0.0f, 0.0f, -0.01f};
 	//離脱速度
 	Vector3 leaveVelocity = {-0.1f, -0.1f, 0.0f};
 
@@ -147,3 +147,5 @@ Vector3 Enemy::GetWorldPosition() {
 
 	return worldPos;
 }
+
+void Enemy::OnCollision() {}
