@@ -3,13 +3,15 @@
 #include "MyMath.h"
 #include "cassert"
 
-void Player::Initialize(Model* model, uint32_t textureHandle, ViewProjection* viewProjection) {
+void Player::Initialize(Model* model, uint32_t textureHandle, Vector3 vector) {
 
 	assert(model);
 
 	model_ = model;
 	textureHandle_ = textureHandle;
-	viewProjection_ = viewProjection;
+
+	worldTransform_.translation_ = vector;
+
 	worldTransform_.Initialize();
 
 	// シングルトンインスタンス
@@ -115,6 +117,7 @@ void Player::Attack() {
 		// 弾を生成し、初期化
 		PlayerBullet* newBullet = new PlayerBullet();
 		newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+		newBullet->SetParent(worldTransform_.parent_);
 
 		// 弾を登録する
 		bullets_.push_back(newBullet);
@@ -129,10 +132,10 @@ Player::~Player() {
 	}
 }
 
-Vector3 Player::GetWorldPosition() { 
-	//ワールド座標を入れる変数
+Vector3 Player::GetWorldPosition() {
+	// ワールド座標を入れる変数
 	Vector3 worldPos;
-	//ワールド行列の平行移動成分を取得( ワールド座標 )
+	// ワールド行列の平行移動成分を取得( ワールド座標 )
 	worldPos.x = worldTransform_.matWorld_.m[3][0];
 	worldPos.y = worldTransform_.matWorld_.m[3][1];
 	worldPos.z = worldTransform_.matWorld_.m[3][2];
@@ -141,3 +144,8 @@ Vector3 Player::GetWorldPosition() {
 }
 
 void Player::OnCollision() {}
+
+void Player::SetParent(const WorldTransform* parent) {
+	// 親子関係を結ぶ
+	worldTransform_.parent_ = parent;
+}

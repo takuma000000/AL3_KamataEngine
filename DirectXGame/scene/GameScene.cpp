@@ -14,6 +14,7 @@ GameScene::~GameScene() {
 	delete enemy_;
 	delete skydome_;
 	delete modelSkydome_;
+	delete railCamera_;
 }
 
 void GameScene::Initialize() {
@@ -28,9 +29,16 @@ void GameScene::Initialize() {
 	model_ = Model::Create();
 
 	viewProjection_.Initialize();
+	worldTransform_.Initialize();
+
+	// RailCamera の初期化
+	railCamera_ = new RailCamera();
+	railCamera_->Initialize(worldTransform_, &viewProjection_);
 
 	player_ = new Player();
-	player_->Initialize(model_, textureHandle_, &viewProjection_);
+	Vector3 playerPosition(0, 0, 20);
+	player_->Initialize(model_, textureHandle_, playerPosition);
+	player_->SetParent(railCamera_->GetWorldTransform());
 
 	enemy_ = new Enemy();
 	enemy_->Initialize(model_, enemyTextureHandle_, &viewProjection_);
@@ -47,10 +55,9 @@ void GameScene::Initialize() {
 
 	// 天球の3Dモデルの生成
 	modelSkydome_ = Model::CreateFromOBJ("SkyDome", true);
-	//天球
+	// 天球
 	skydome_ = new skydome;
 	skydome_->Initialize(modelSkydome_, &viewProjection_);
-
 }
 
 void GameScene::Update() {
@@ -72,8 +79,12 @@ void GameScene::Update() {
 		// ビュープロジェクション行列の転送
 		viewProjection_.TransferMatrix();
 	} else {
+		// RailCamera の更新
+		railCamera_->Update(); // RailCamera の更新を行う
 		// ビュープロジェクション行列の更新と転送
-		viewProjection_.UpdateMatrix();
+		viewProjection_.matProjection =
+		    railCamera_->GetViewProjection().matProjection; // プロジェクション行列を取得してコピー
+		viewProjection_.TransferMatrix(); // 必要に応じてビュー行列を更新する
 	}
 
 #ifdef _DEBUG
@@ -84,8 +95,10 @@ void GameScene::Update() {
 
 #endif // _DEBUG
 
-	//天球
+	// 天球
 	skydome_->Update();
+	//ワールドトランスフォーム
+	worldTransform_.UpdateMatrix();
 }
 
 void GameScene::Draw() {
@@ -121,7 +134,7 @@ void GameScene::Draw() {
 		enemy_->Draw(viewProjection_);
 	}
 
-	//天球
+	// 天球
 	skydome_->Draw();
 
 	// 3Dオブジェクト描画後処理
@@ -200,7 +213,7 @@ void GameScene::CheckAllCollision() {
 			posB = enemyBullet->GetWorldPosition();
 			// 座標AとBの距離を求める
 			float distance = MyMath::Length(posB - posA);
-			//交差判定
+			// 交差判定
 			if (distance <= playerBulletRadius + enemyBulletRadius) {
 				// 自弾の衝突時コールバックを呼び出す
 				playerBullet->OnCollision();

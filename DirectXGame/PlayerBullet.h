@@ -20,6 +20,9 @@ public:
 	// ワールド座標を取得
 	Vector3 GetWorldPosition();
 
+	// 親となるワールドトランスフォームをセット
+	void SetParent(const WorldTransform* parent);
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;

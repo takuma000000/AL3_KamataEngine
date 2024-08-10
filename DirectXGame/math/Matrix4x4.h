@@ -48,4 +48,20 @@ struct Matrix4x4 final {
 		}
 		return result;
 	}
+
+	// *= 演算子 (行列乗算)
+	Matrix4x4& operator*=(const Matrix4x4& other) {
+		*this = *this * other;
+		return *this;
+	}
+
+	// *= 演算子 (スカラー乗算)
+	Matrix4x4& operator*=(float scalar) {
+		for (int i = 0; i < 4; ++i) {
+			for (int j = 0; j < 4; ++j) {
+				this->m[i][j] *= scalar;
+			}
+		}
+		return *this;
+	}
 };

@@ -47,3 +47,8 @@ Vector3 PlayerBullet::GetWorldPosition() {
 	worldPos.z = worldTransform_.matWorld_.m[3][2];
 	return worldPos;
 }
+
+void PlayerBullet::SetParent(const WorldTransform* parent) {
+	// 親子関係を結ぶ
+	worldTransform_.parent_ = parent;
+}
