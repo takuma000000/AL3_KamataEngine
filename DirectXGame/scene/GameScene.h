@@ -1,19 +1,21 @@
 #pragma once
 
 #include "Audio.h"
+#include "DebugCamera.h"
 #include "DirectXCommon.h"
+#include "Enemy.h"
 #include "Input.h"
 #include "Model.h"
+#include "Player.h"
+#include "RailCamera.h"
 #include "SafeDelete.h"
 #include "Sprite.h"
+#include "Vector3.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-#include "Player.h"
-#include "DebugCamera.h"
-#include "Enemy.h"
-#include "Vector3.h"
 #include "skydome.h"
-#include "RailCamera.h"
+#include <list>
+#include <sstream>
 
 /// <summary>
 /// ゲームシーン
@@ -47,8 +49,22 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
-	//衝突判定と応答
+	// 衝突判定と応答
 	void CheckAllCollision();
+
+	// 弾リストを取得
+	//const std::list<EnemyBullet*>& GetBullets() const { return bullets_; }
+
+	// 敵弾を追加する
+	void AddEnemyBullet(EnemyBullet* enemyBullet);
+
+	//敵発生データの読み込み
+	void LoadEnemyPopData();
+
+	//敵発生コマンドの更新
+	void UpdateEnemyPopCommands();
+
+	void EnemyPop(Vector3 position);
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -65,23 +81,40 @@ private: // メンバ変数
 	Player* player_ = nullptr;
 	Enemy* enemy_ = nullptr;
 
-	//デバッグカメラ有効
+	// デバッグカメラ有効
 	bool isDebugCameraActive_ = false;
-	//デバッグカメラ
+	// デバッグカメラ
 	DebugCamera* debugCamera_ = nullptr;
 
 	// 速度
 	Vector3 velocity_;
 	uint32_t enemyTextureHandle_ = 0;
-	
-	//天球
+
+	// 天球
 	skydome* skydome_ = nullptr;
 
-	//3Dモデル 天球
+	// 3Dモデル 天球
 	Model* modelSkydome_ = nullptr;
 
-	//RailCamera
+	// RailCamera
 	RailCamera* railCamera_ = nullptr;
+
+	// 弾
+	//std::list<EnemyBullet*> bullets_;
+
+	// 複数の敵に対して
+	std::list<EnemyBullet*> enemyBullets_;
+
+	// 複数の敵キャラを管理するリスト
+	std::list<Enemy*> enemies_;
+
+	//敵発生コマンド
+	std::stringstream enemyPopCommands;
+
+	//待機中フラグ
+	bool isWaiting = false;
+	//待機タイマー
+	int waitingTimer_ = 0;
 
 	/// <summary>
 	/// ゲームシーン用

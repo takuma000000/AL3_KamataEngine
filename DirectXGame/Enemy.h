@@ -2,12 +2,15 @@
 #include "EnemyBullet.h"
 #include "Input.h"
 #include "Model.h"
+#include "Vector3.h"
 #include "WorldTransform.h"
 #include <list>
-#include "Vector3.h"
 
 // 自機クラスの前方処理
 class Player;
+
+// GameSceneの前方宣言
+class GameScene;
 
 enum class Phase {
 	Approach, // 接近する
@@ -17,7 +20,7 @@ enum class Phase {
 class Enemy {
 
 public:
-	void Initialize(Model* model, uint32_t textureHandle, ViewProjection* viewProjection);
+	void Initialize(Model* model, uint32_t textureHandle, ViewProjection* viewProjection,Vector3 position);
 
 	void Update();
 
@@ -39,13 +42,18 @@ public:
 
 	void SetPlayer(Player* player) { player_ = player; }
 
+	// ポジションをポインタでセットするメソッド
+	void SetPos(Vector3* position) { position_ = position; }
+
 	Vector3 GetWorldPosition();
 
 	// 衝突を検出したら呼び出されるコールバック関数
 	void OnCollision();
 
-	// 弾リストを取得
-	const std::list<EnemyBullet*>& GetBullets() const { return bullets_; }
+	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
+
+	// デスフラグ
+	bool isDead() const { return isDead_; }
 
 private:
 	WorldTransform worldTransform_;
@@ -59,12 +67,17 @@ private:
 	// フェーズ
 	Phase phase_ = Phase::Approach; // 初期フェーズを設定
 
-	// 弾
-	std::list<EnemyBullet*> bullets_;
-
 	// 発射タイマー
 	int32_t fireTimer = 0;
 
 	// 自キャラ
 	Player* player_ = nullptr;
+
+	Vector3* position_ = nullptr; // ポインタ型として宣言
+
+	// GameScene
+	GameScene* gameScene_ = nullptr;
+
+	// デスフラグ
+	bool isDead_ = false;
 };

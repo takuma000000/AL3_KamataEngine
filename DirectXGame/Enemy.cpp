@@ -3,22 +3,24 @@
 #include "cassert"
 #include "ImGuiManager.h"
 #include "Player.h"
+#include "GameScene.h"
 
-void Enemy::Initialize(Model* model, uint32_t textureHandle, ViewProjection* viewProjection) {
+void Enemy::Initialize(Model* model, uint32_t textureHandle, ViewProjection* viewProjection,Vector3 position) {
 
 	assert(model);
 
 	model_ = model;
 	textureHandle_ = textureHandle;
 	viewProjection_ = viewProjection;
+	worldTransform_.translation_ = position;
 	worldTransform_.Initialize();
 
-	//X座標を指定
-	worldTransform_.translation_.x = 30.0f;
-	//Y座標を指定
-	worldTransform_.translation_.y = 5.0f;
-	//Z座標を指定
-	worldTransform_.translation_.z = 20.0f;
+	////X座標を指定
+	//worldTransform_.translation_.x = 30.0f;
+	////Y座標を指定
+	//worldTransform_.translation_.y = 5.0f;
+	////Z座標を指定
+	//worldTransform_.translation_.z = 20.0f;
 
 	// 弾発射
 	//Fire();
@@ -32,19 +34,10 @@ void Enemy::Update() {
 	// 接近フェーズ更新
 	ApproachUpdate();
 
-	// デスフラグの立った弾を削除
-	bullets_.remove_if([](EnemyBullet* bullet) {
-		if (bullet->isDead()) {
-			delete bullet;
-			return true;
-		}
-		return false;
-	});
-
 	//接近速度
 	Vector3 approachVelocity = {0.0f, 0.0f, -0.01f};
 	//離脱速度
-	Vector3 leaveVelocity = {-0.1f, -0.1f, 0.0f};
+	Vector3 leaveVelocity = {0.0f, 0.0f, -0.01f};
 
 	//switch文による実装
 	switch (phase_) { 
@@ -63,11 +56,6 @@ void Enemy::Update() {
 		break;
 	}
 
-	// 弾の更新
-	for (EnemyBullet* bullet : bullets_) {
-		bullet->Update();
-	}
-
 	// ワールドトランスフォームの更新
 	worldTransform_.UpdateMatrix();
 
@@ -76,11 +64,6 @@ void Enemy::Update() {
 void Enemy::Draw(const ViewProjection& viewProjection) {
 	// モデルの描画
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-
-	// 弾の描画
-	for (EnemyBullet* bullet : bullets_) {
-		bullet->Draw(viewProjection);
-	}
 }
 
 void Enemy::Fire() {
@@ -109,15 +92,13 @@ void Enemy::Fire() {
 	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
 
 	// 弾を登録する
-	bullets_.push_back(newBullet);
+	gameScene_->AddEnemyBullet(newBullet);
 }
 
 Enemy::Enemy() {}
 
 Enemy::~Enemy() {
-	for (EnemyBullet* bullet : bullets_) {
-		delete bullet;
-	}
+	
 }
 
 void Enemy::ApproachInitialize() {
@@ -148,4 +129,4 @@ Vector3 Enemy::GetWorldPosition() {
 	return worldPos;
 }
 
-void Enemy::OnCollision() {}
+void Enemy::OnCollision() { isDead_ = true; }
