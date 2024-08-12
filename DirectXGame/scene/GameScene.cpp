@@ -88,7 +88,7 @@ void GameScene::Update() {
 	CheckAllCollision();
 	UpdateEnemyPopCommands();
 
-	player_->Update();
+	player_->Update(viewProjection_);
 	/*if (enemy_ != nullptr) {
 	    enemy_->Update();
 	}*/

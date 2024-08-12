@@ -12,7 +12,7 @@ class Player {
 public:
 	void Initialize(Model* model, uint32_t textureHandle, Vector3 vector);
 
-	void Update();
+	void Update(const ViewProjection& viewProjection);
 
 	void Draw(ViewProjection& viewProjection);
 
