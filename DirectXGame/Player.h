@@ -3,6 +3,7 @@
 #include "Model.h"
 #include "PlayerBullet.h"
 #include "WorldTransform.h"
+#include <Sprite.h>
 #include <list>
 #include <memory>
 
@@ -25,22 +26,26 @@ public:
 	Player();
 	~Player();
 
-	//ワールド座標を取得
+	// ワールド座標を取得
 	Vector3 GetWorldPosition();
 
-	//衝突を検出したら呼び出されるコールバック関数
+	// 衝突を検出したら呼び出されるコールバック関数
 	void OnCollision();
 
-	//弾リストを取得
+	// 弾リストを取得
 	const std::list<PlayerBullet*>& GetBullets() const { return bullets_; }
 
-	//親となるワールドトランスフォームをセット
+	// 親となるワールドトランスフォームをセット
 	void SetParent(const WorldTransform* parent);
+
+	// UI描画
+	void DrawUI();
 
 private:
 	WorldTransform worldTransform_;
 
-	//ViewProjection* viewProjection_ = nullptr;
+	// ViewProjectionのポインタを追加
+	ViewProjection viewProjection_;
 
 	Model* model_ = nullptr;
 
@@ -51,4 +56,10 @@ private:
 
 	// 弾
 	std::list<PlayerBullet*> bullets_;
+
+	//	3Dレティクル用ワールドトランスフォーム
+	WorldTransform worldTransform3DReticle_;
+
+	// 2Dレティクル用スプライト
+	Sprite* sprite2D_ = nullptr;
 };

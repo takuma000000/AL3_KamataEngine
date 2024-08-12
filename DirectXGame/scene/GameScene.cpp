@@ -28,6 +28,8 @@ void GameScene::Initialize() {
 
 	textureHandle_ = TextureManager::Load("sample.png");
 	enemyTextureHandle_ = TextureManager::Load("mario_yosshi.jpg");
+	//レティクルのテクスチャ
+	TextureManager::Load("point.png");
 
 	model_ = Model::Create();
 
@@ -211,6 +213,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+
+	player_->DrawUI();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
