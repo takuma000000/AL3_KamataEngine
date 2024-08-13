@@ -141,8 +141,6 @@ void Player::Update(const ViewProjection& viewProjection) {
 	worldTransform3DReticle_.translation_ = posNear + mouseDirection * kDistanceTestObject;
 	worldTransform3DReticle_.UpdateMatrix();
 
-	//
-
 	// キャラクターの座標を表示する処理
 	ImGui::Begin("chara");
 	ImGui::DragFloat3("translation", &worldTransform_.translation_.x, 0.01f);
