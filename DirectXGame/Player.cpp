@@ -20,7 +20,10 @@ void Player::Initialize(Model* model, uint32_t textureHandle, Vector3 vector) {
 	// アンカーポイント
 	Vector2 point = {0.5f, 0.5f};
 	// スプライト生成
-	sprite2D_ = Sprite::Create(textureReticle, Vector2(worldTransform3DReticle_.translation_.x, worldTransform3DReticle_.translation_.y), color, point);
+	sprite2D_ = Sprite::Create(
+	    textureReticle,
+	    Vector2(worldTransform3DReticle_.translation_.x, worldTransform3DReticle_.translation_.y),
+	    color, point);
 
 	// 初期化
 	worldTransform_.Initialize();
@@ -106,6 +109,40 @@ void Player::Update(const ViewProjection& viewProjection) {
 	sprite2D_->SetPosition(Vector2(posReticle.x, posReticle.y));
 	sprite2D_->SetSize(Vector2(150.0f, 150.0f));
 
+	////マウスカーソルのスクリーン座標からワールド座標を取得して3Dレティクル配置
+	POINT mousePosition;
+	// マウス座標( スクリーン座標 )を取得する
+	GetCursorPos(&mousePosition);
+	// クライアントエリアに座標変換する
+	HWND hwnd = WinApp::GetInstance()->GetHwnd();
+	ScreenToClient(hwnd, &mousePosition);
+	// マウス座標を2Dレティクルのスプライトに代入する
+	sprite2D_->SetPosition(
+	    Vector2(static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y)));
+	// ビュープロジェクションビューポート合成行列を計算
+	Matrix4x4 matVPV = MyMath::Multiply(viewProjection.matView, viewProjection.matProjection);
+	matVPV = MyMath::Multiply(matVPV, matViewPort);
+	// 合成行列の逆行列を計算する
+	Matrix4x4 matInverseVPV = MyMath::Inverse4x4(matVPV);
+	// スクリーン座標
+	Vector3 posNear =
+	    Vector3(static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y), 0);
+	Vector3 posFar =
+	    Vector3(static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y), 1);
+	// スクリーン座標系からワールド座標系へ
+	posNear = MyMath::Transform(posNear, matInverseVPV);
+	posFar = MyMath::Transform(posFar, matInverseVPV);
+	// マウスレイの方向を計算
+	Vector3 mouseDirection = posFar - posNear;
+	mouseDirection = MyMath::Normalize(mouseDirection);
+	//カメラから照準オブジェクトの距離
+	const float kDistanceTestObject = 100.0f;
+	// マウスレイの方向から新しい位置を計算
+	worldTransform3DReticle_.translation_ = posNear + mouseDirection * kDistanceTestObject;
+	worldTransform3DReticle_.UpdateMatrix();
+
+	//
+
 	// キャラクターの座標を表示する処理
 	ImGui::Begin("chara");
 	ImGui::DragFloat3("translation", &worldTransform_.translation_.x, 0.01f);
@@ -118,7 +155,7 @@ void Player::Update(const ViewProjection& viewProjection) {
 void Player::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 	// 3Dレティクルを描画
-	//model_->Draw(worldTransform3DReticle_, viewProjection);
+	// model_->Draw(worldTransform3DReticle_, viewProjection);
 
 	// DrawUI();
 
