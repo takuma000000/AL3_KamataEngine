@@ -4,18 +4,16 @@
 #include "DirectXCommon.h"
 #include "Input.h"
 #include "Model.h"
+#include "Player.h"
 #include "SafeDelete.h"
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-#include "Player.h"
-
+#include <memory>
 
 /// <summary>
 /// ゲームシーン
 /// </summary>
-
-
 
 class GameScene {
 
@@ -52,13 +50,12 @@ private: // メンバ変数
 
 	uint32_t textureHandle_ = 0;
 
-	Model* model_ = nullptr;
+	std::unique_ptr<Model> model_;
 
-	//WorldTransform worldTransform_;
+	// WorldTransform worldTransform_;
 	ViewProjection viewProjection_;
-
-	Player* player_ = nullptr;
-
+	// 自キャラ
+	std::unique_ptr<Player> player_;
 
 	/// <summary>
 	/// ゲームシーン用
