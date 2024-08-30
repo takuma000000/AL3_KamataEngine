@@ -23,6 +23,8 @@ GameScene::~GameScene() {
 
 void GameScene::Initialize() {
 
+	phase_ = Phase::kPlay;
+
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
@@ -84,64 +86,108 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
-	LoadEnemyPopData();
-	CheckAllCollision();
-	UpdateEnemyPopCommands();
 
-	player_->Update(viewProjection_);
+	switch (phase_) { 
+	case Phase::kPlay:
 
-	if (isDebugCameraActive_) {
-		debugCamera_->Update();
-		viewProjection_.matView = debugCamera_->GetView();
-		viewProjection_.matProjection = debugCamera_->GetProjection();
-		viewProjection_.TransferMatrix();
-	} else {
-		railCamera_->Update();
-		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
-		viewProjection_.TransferMatrix();
-	}
+		LoadEnemyPopData();
+		CheckAllCollision();
+		UpdateEnemyPopCommands();
+
+		player_->Update(viewProjection_);
+
+		if (isDebugCameraActive_) {
+			debugCamera_->Update();
+			viewProjection_.matView = debugCamera_->GetView();
+			viewProjection_.matProjection = debugCamera_->GetProjection();
+			viewProjection_.TransferMatrix();
+		} else {
+			railCamera_->Update();
+			viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
+			viewProjection_.TransferMatrix();
+		}
 
 #ifdef _DEBUG
-	if (input_->TriggerKey(DIK_SPACE)) {
-		isDebugCameraActive_ = true;
-	}
+		if (input_->TriggerKey(DIK_SPACE)) {
+			isDebugCameraActive_ = true;
+		}
 #endif // _DEBUG
 
-	skydome_->Update();
+		skydome_->Update();
 
-	for (EnemyBullet* enemyBullet : enemyBullets_) {
-		enemyBullet->Update();
-	}
-
-	// 敵キャラの更新と死亡チェック
-	for (Enemy* enemy : enemies_) {
-		enemy->Update();
-		if (enemy->isDead()) {
-			enemyDeadCounter++; // 敵が死亡した場合にカウントアップ
+		for (EnemyBullet* enemyBullet : enemyBullets_) {
+			enemyBullet->Update();
 		}
-	}
 
-	enemies_.remove_if([](Enemy* enemy) {
-		if (enemy->isDead()) {
-			delete enemy;
-			return true;
+		// 敵キャラの更新と死亡チェック
+		for (Enemy* enemy : enemies_) {
+			enemy->Update();
+			if (enemy->isDead()) {
+				enemyDeadCounter++; // 敵が死亡した場合にカウントアップ
+			}
 		}
-		return false;
-	});
 
-	for (EnemyBullet* bullet : enemyBullets_) {
-		bullet->Update();
-	}
+		enemies_.remove_if([](Enemy* enemy) {
+			if (enemy->isDead()) {
+				delete enemy;
+				return true;
+			}
+			return false;
+		});
 
-	enemyBullets_.remove_if([](EnemyBullet* bullet) {
-		if (bullet->isDead()) {
-			delete bullet;
-			return true;
+		for (EnemyBullet* bullet : enemyBullets_) {
+			bullet->Update();
 		}
-		return false;
-	});
 
-	worldTransform_.UpdateMatrix();
+		enemyBullets_.remove_if([](EnemyBullet* bullet) {
+			if (bullet->isDead()) {
+				delete bullet;
+				return true;
+			}
+			return false;
+		});
+
+		worldTransform_.UpdateMatrix();
+
+		break;
+	case Phase::kDeath:
+		skydome_->Update();
+
+		for (EnemyBullet* enemyBullet : enemyBullets_) {
+			enemyBullet->Update();
+		}
+
+		// 敵キャラの更新と死亡チェック
+		for (Enemy* enemy : enemies_) {
+			enemy->Update();
+			if (enemy->isDead()) {
+				enemyDeadCounter++; // 敵が死亡した場合にカウントアップ
+			}
+		}
+
+		enemies_.remove_if([](Enemy* enemy) {
+			if (enemy->isDead()) {
+				delete enemy;
+				return true;
+			}
+			return false;
+		});
+
+		for (EnemyBullet* bullet : enemyBullets_) {
+			bullet->Update();
+		}
+
+		enemyBullets_.remove_if([](EnemyBullet* bullet) {
+			if (bullet->isDead()) {
+				delete bullet;
+				return true;
+			}
+			return false;
+		});
+
+		worldTransform_.UpdateMatrix();
+		break;
+	}
 
 	// ImGui を使って GUI を描画
 	ImGui::Begin("Debug Info"); // ウィンドウの開始
@@ -380,3 +426,5 @@ void GameScene::EnemyPop(Vector3 position) {
 	//
 	enemies_.push_back(enemy_);
 }
+
+void GameScene::ChangePhase() {}

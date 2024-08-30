@@ -65,7 +65,16 @@ public: // メンバ関数
 
 	void EnemyPop(Vector3 position);
 
+	void ChangePhase();
+
 private: // メンバ変数
+
+	enum class Phase {
+		kPlay,
+		kDeath,
+	};
+
+
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
@@ -122,6 +131,8 @@ private: // メンバ変数
 
 	//ゲームの制限時間
 	int gameTimer = 600;
+
+	Phase phase_;
 
 	/// <summary>
 	/// ゲームシーン用
