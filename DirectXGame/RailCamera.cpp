@@ -18,7 +18,7 @@ void RailCamera::Initialize(WorldTransform& transform, ViewProjection* viewProje
 
 void RailCamera::Update() {
 	// ワールドトランスフォームの座標に加算 (例: カメラがZ軸方向に移動)
-	worldTransform_->translation_.z -= 0.1f; // Z軸方向に0.1単位移動
+	//worldTransform_->translation_.z -= 0.1f; // Z軸方向に0.1単位移動
 
 	//// ワールドトランスフォームの角度に加算 (例: Y軸回りに回転)
 	// float degree = 1.0f;                             // 1度

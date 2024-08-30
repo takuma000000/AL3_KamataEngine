@@ -2,6 +2,7 @@
 #include "AxisIndicator.h"
 #include "MyMath.h"
 #include "TextureManager.h"
+#include "imgui.h"
 #include <cassert>
 #include <fstream>
 
@@ -28,7 +29,7 @@ void GameScene::Initialize() {
 
 	textureHandle_ = TextureManager::Load("sample.png");
 	enemyTextureHandle_ = TextureManager::Load("mario_yosshi.jpg");
-	//レティクルのテクスチャ
+	// レティクルのテクスチャ
 	TextureManager::Load("point.png");
 
 	model_ = Model::Create();
@@ -83,52 +84,41 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
-
 	LoadEnemyPopData();
 	CheckAllCollision();
 	UpdateEnemyPopCommands();
 
 	player_->Update(viewProjection_);
-	/*if (enemy_ != nullptr) {
-	    enemy_->Update();
-	}*/
 
-	/// カメラの処理
 	if (isDebugCameraActive_) {
-		// デバッグカメラの更新
 		debugCamera_->Update();
 		viewProjection_.matView = debugCamera_->GetView();
 		viewProjection_.matProjection = debugCamera_->GetProjection();
-
-		// ビュープロジェクション行列の転送
 		viewProjection_.TransferMatrix();
 	} else {
-		// RailCamera の更新
-		railCamera_->Update(); // RailCamera の更新を行う
-		// ビュープロジェクション行列の更新と転送
-		viewProjection_.matProjection =
-		    railCamera_->GetViewProjection().matProjection; // プロジェクション行列を取得してコピー
-		viewProjection_.TransferMatrix(); // 必要に応じてビュー行列を更新する
+		railCamera_->Update();
+		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
+		viewProjection_.TransferMatrix();
 	}
 
 #ifdef _DEBUG
-
 	if (input_->TriggerKey(DIK_SPACE)) {
 		isDebugCameraActive_ = true;
 	}
-
 #endif // _DEBUG
 
-	// 天球
 	skydome_->Update();
 
-	// enemyBullets
 	for (EnemyBullet* enemyBullet : enemyBullets_) {
 		enemyBullet->Update();
 	}
 
+	// 敵キャラの更新と死亡チェック
 	for (Enemy* enemy : enemies_) {
 		enemy->Update();
+		if (enemy->isDead()) {
+			enemyDeadCounter++; // 敵が死亡した場合にカウントアップ
+		}
 	}
 
 	enemies_.remove_if([](Enemy* enemy) {
@@ -139,7 +129,6 @@ void GameScene::Update() {
 		return false;
 	});
 
-	// 弾の更新
 	for (EnemyBullet* bullet : enemyBullets_) {
 		bullet->Update();
 	}
@@ -152,8 +141,13 @@ void GameScene::Update() {
 		return false;
 	});
 
-	// ワールドトランスフォーム
 	worldTransform_.UpdateMatrix();
+
+	// ImGui を使って GUI を描画
+	ImGui::Begin("Debug Info"); // ウィンドウの開始
+	// 敵を倒したカウンターを表示
+	ImGui::Text("Enemies Defeated: %d", enemyDeadCounter);
+	ImGui::End(); // ウィンドウの終了
 }
 
 void GameScene::Draw() {

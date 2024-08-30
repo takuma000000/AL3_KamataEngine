@@ -20,7 +20,6 @@
 /// <summary>
 /// ゲームシーン
 /// </summary>
-
 class GameScene {
 
 public: // メンバ関数
@@ -53,15 +52,15 @@ public: // メンバ関数
 	void CheckAllCollision();
 
 	// 弾リストを取得
-	//const std::list<EnemyBullet*>& GetBullets() const { return bullets_; }
+	// const std::list<EnemyBullet*>& GetBullets() const { return bullets_; }
 
 	// 敵弾を追加する
 	void AddEnemyBullet(EnemyBullet* enemyBullet);
 
-	//敵発生データの読み込み
+	// 敵発生データの読み込み
 	void LoadEnemyPopData();
 
-	//敵発生コマンドの更新
+	// 敵発生コマンドの更新
 	void UpdateEnemyPopCommands();
 
 	void EnemyPop(Vector3 position);
@@ -80,6 +79,8 @@ private: // メンバ変数
 
 	Player* player_ = nullptr;
 	Enemy* enemy_ = nullptr;
+
+	Model* modelPlayer_ = nullptr;
 
 	// デバッグカメラ有効
 	bool isDebugCameraActive_ = false;
@@ -100,7 +101,7 @@ private: // メンバ変数
 	RailCamera* railCamera_ = nullptr;
 
 	// 弾
-	//std::list<EnemyBullet*> bullets_;
+	// std::list<EnemyBullet*> bullets_;
 
 	// 複数の敵に対して
 	std::list<EnemyBullet*> enemyBullets_;
@@ -108,13 +109,19 @@ private: // メンバ変数
 	// 複数の敵キャラを管理するリスト
 	std::list<Enemy*> enemies_;
 
-	//敵発生コマンド
+	// 敵発生コマンド
 	std::stringstream enemyPopCommands;
 
-	//待機中フラグ
+	// 待機中フラグ
 	bool isWaiting = false;
-	//待機タイマー
+	// 待機タイマー
 	int waitingTimer_ = 0;
+
+	// 敵を倒した際のカウンター
+	int enemyDeadCounter = 0;
+
+	//ゲームの制限時間
+	int gameTimer = 600;
 
 	/// <summary>
 	/// ゲームシーン用

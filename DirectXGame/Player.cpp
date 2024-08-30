@@ -192,7 +192,13 @@ void Player::Attack() {
 		// 3Dレティクルのワールド座標と自機のワールド座標の差を計算
 		Vector3 velocity = worldTransform3DReticle_.translation_ - worldTransform_.translation_;
 
-		// ベクトルの正規化と弾の速さを掛け合わせる
+		// ベクトルの正規化
+		velocity = MyMath::Normalize(velocity);
+
+		// 基本的に+z方向に進むように設定し、-z方向には進まないようにする
+		if (velocity.z < 0) {
+			velocity.z = -velocity.z;
+		}
 		velocity = MyMath::Normalize(velocity) * kBulletSpeed;
 
 		// 弾を生成し、初期化
@@ -204,6 +210,8 @@ void Player::Attack() {
 		bullets_.push_back(newBullet);
 	}
 }
+
+
 
 Player::Player() {}
 
