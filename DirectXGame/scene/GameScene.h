@@ -14,6 +14,8 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "skydome.h"
+#include "Title.h"
+#include "Finish.h"
 #include <list>
 #include <sstream>
 
@@ -107,6 +109,16 @@ private: // メンバ変数
 	// 3Dモデル 天球
 	Model* modelSkydome_ = nullptr;
 
+	//タイトル
+	Title* title_ = nullptr;
+	//タイトルモデル
+	Model* modelTitle_ = nullptr;
+
+	//フィニッシュ画面
+	Finish* finish_ = nullptr;
+	//フィニッシュモデル
+	Model* modelFinish_ = nullptr;
+
 	// RailCamera
 	RailCamera* railCamera_ = nullptr;
 
@@ -131,7 +143,7 @@ private: // メンバ変数
 	int enemyDeadCounter = 0;
 
 	//ゲームの制限時間
-	int gameTimer = 600;
+	int gameTimer = 1200;
 
 	Phase phase_;
 

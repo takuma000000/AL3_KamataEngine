@@ -83,17 +83,34 @@ void GameScene::Initialize() {
 	// 天球
 	skydome_ = new skydome;
 	skydome_->Initialize(modelSkydome_, &viewProjection_);
+
+	//モデルタイトル
+	modelTitle_ = Model::CreateFromOBJ("BombCrush_Title", true);
+	//タイトル
+	title_ = new Title;
+	title_->Initialize(modelTitle_, &viewProjection_);
+
+	//モデルフィニッシュ
+	modelFinish_ = Model::CreateFromOBJ("Finish", true);
+	finish_ = new Finish;
+	finish_->Initialize(modelFinish_, &viewProjection_);
+
 }
 
 void GameScene::Update() {
+
+
 	// フェーズごとの処理
 	switch (phase_) {
 	case Phase::kTitle:
+
+		title_->Update();
+
 		// スペースキーが押されたら kPlay フェーズに移行
 		if (input_->TriggerKey(DIK_SPACE)) {
 			phase_ = Phase::kPlay;
 			// ゲームタイマーを初期化
-			gameTimer = 600;
+			gameTimer = 1200;
 		}
 		break;
 
@@ -105,6 +122,8 @@ void GameScene::Update() {
 			// タイマーが0以下になったらkDeathフェーズに移行し、gameTimerをリセット
 			ChangePhase();
 		}
+
+		//finish_->Update();
 
 		LoadEnemyPopData();
 		CheckAllCollision();
@@ -182,13 +201,33 @@ void GameScene::Update() {
 		});
 
 		worldTransform_.UpdateMatrix();
+
+		// finishオブジェクトの更新処理
+		finish_->Update();
+
 		break;
+
 	}
 
 	// ImGui を使って GUI を描画
 	ImGui::Begin("Debug Info");                            // ウィンドウの開始
 	ImGui::Text("Enemies Defeated: %d", enemyDeadCounter); // 敵を倒したカウンターを表示
 	ImGui::Text("Game Timer: %d", gameTimer);              // ゲームタイマーの表示
+	// 現在のフェーズを表示
+	const char* phaseText = "";
+	switch (phase_) {
+	case Phase::kTitle:
+		phaseText = "Title";
+		break;
+	case Phase::kPlay:
+		phaseText = "Play";
+		break;
+	case Phase::kDeath:
+		phaseText = "Death";
+		break;
+	}
+	ImGui::Text("Current Phase: %s", phaseText);
+
 	ImGui::End();                                          // ウィンドウの終了
 }
 
@@ -223,6 +262,8 @@ void GameScene::Draw() {
 	switch (phase_) {
 	case Phase::kTitle:
 
+		title_->Draw();
+
 		break;
 	case Phase::kPlay:
 		player_->Draw(viewProjection_);
@@ -240,16 +281,21 @@ void GameScene::Draw() {
 			bullet->Draw(viewProjection_);
 		}
 
+		// 天球
+		skydome_->Draw();
+
 		break;
 
 	case Phase::kDeath:
-		// 死亡フェーズ中の処理を記述
+
+		/*if (gameTimer <= 1200) {
+			finish_->Draw();
+		}*/
 
 		break;
 	}
 
-	// 天球
-	skydome_->Draw();
+	
 
 
 	// 3Dオブジェクト描画後処理
@@ -277,6 +323,7 @@ void GameScene::Draw() {
 
 	case Phase::kDeath:
 		// 死亡フェーズ中の処理を記述
+	
 		break;
 	}
 	
@@ -458,13 +505,14 @@ void GameScene::ChangePhase() {
 		// ゲームタイマーが0以下になったら死亡フェーズに移行
 		if (gameTimer <= 0) {
 			phase_ = Phase::kDeath;
-			// ゲームタイマーを600にリセット
-			gameTimer = 600;
+			// ゲームタイマーを1200にリセット
+			gameTimer = 1200;
 		}
 		break;
 
 	case Phase::kDeath:
 		// 死亡フェーズ中の処理を記述
+		
 		break;
 	}
 }
