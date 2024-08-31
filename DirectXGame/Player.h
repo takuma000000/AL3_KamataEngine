@@ -41,6 +41,9 @@ public:
 	// UI描画
 	void DrawUI();
 
+	//デスフラグ
+	bool IsDead() const { return isDead_; }
+
 private:
 	WorldTransform worldTransform_;
 
@@ -62,4 +65,6 @@ private:
 
 	// 2Dレティクル用スプライト
 	Sprite* sprite2D_ = nullptr;
+
+	bool isDead_ = false;
 };

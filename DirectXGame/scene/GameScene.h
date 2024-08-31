@@ -70,6 +70,7 @@ public: // メンバ関数
 private: // メンバ変数
 
 	enum class Phase {
+		kTitle,
 		kPlay,
 		kDeath,
 	};

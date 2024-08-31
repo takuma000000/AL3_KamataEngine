@@ -23,7 +23,7 @@ GameScene::~GameScene() {
 
 void GameScene::Initialize() {
 
-	phase_ = Phase::kPlay;
+	phase_ = Phase::kTitle;
 
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
@@ -86,9 +86,25 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
+	// フェーズごとの処理
+	switch (phase_) {
+	case Phase::kTitle:
+		// スペースキーが押されたら kPlay フェーズに移行
+		if (input_->TriggerKey(DIK_SPACE)) {
+			phase_ = Phase::kPlay;
+			// ゲームタイマーを初期化
+			gameTimer = 600;
+		}
+		break;
 
-	switch (phase_) { 
 	case Phase::kPlay:
+		// ゲームタイマーを減らす
+		if (gameTimer > 0) {
+			gameTimer--;
+		} else {
+			// タイマーが0以下になったらkDeathフェーズに移行し、gameTimerをリセット
+			ChangePhase();
+		}
 
 		LoadEnemyPopData();
 		CheckAllCollision();
@@ -119,7 +135,6 @@ void GameScene::Update() {
 			enemyBullet->Update();
 		}
 
-		// 敵キャラの更新と死亡チェック
 		for (Enemy* enemy : enemies_) {
 			enemy->Update();
 			if (enemy->isDead()) {
@@ -134,10 +149,6 @@ void GameScene::Update() {
 			}
 			return false;
 		});
-
-		for (EnemyBullet* bullet : enemyBullets_) {
-			bullet->Update();
-		}
 
 		enemyBullets_.remove_if([](EnemyBullet* bullet) {
 			if (bullet->isDead()) {
@@ -148,33 +159,18 @@ void GameScene::Update() {
 		});
 
 		worldTransform_.UpdateMatrix();
-
 		break;
+
 	case Phase::kDeath:
+		// 死亡フェーズの処理
 		skydome_->Update();
 
 		for (EnemyBullet* enemyBullet : enemyBullets_) {
 			enemyBullet->Update();
 		}
 
-		// 敵キャラの更新と死亡チェック
 		for (Enemy* enemy : enemies_) {
 			enemy->Update();
-			if (enemy->isDead()) {
-				enemyDeadCounter++; // 敵が死亡した場合にカウントアップ
-			}
-		}
-
-		enemies_.remove_if([](Enemy* enemy) {
-			if (enemy->isDead()) {
-				delete enemy;
-				return true;
-			}
-			return false;
-		});
-
-		for (EnemyBullet* bullet : enemyBullets_) {
-			bullet->Update();
 		}
 
 		enemyBullets_.remove_if([](EnemyBullet* bullet) {
@@ -190,10 +186,10 @@ void GameScene::Update() {
 	}
 
 	// ImGui を使って GUI を描画
-	ImGui::Begin("Debug Info"); // ウィンドウの開始
-	// 敵を倒したカウンターを表示
-	ImGui::Text("Enemies Defeated: %d", enemyDeadCounter);
-	ImGui::End(); // ウィンドウの終了
+	ImGui::Begin("Debug Info");                            // ウィンドウの開始
+	ImGui::Text("Enemies Defeated: %d", enemyDeadCounter); // 敵を倒したカウンターを表示
+	ImGui::Text("Game Timer: %d", gameTimer);              // ゲームタイマーの表示
+	ImGui::End();                                          // ウィンドウの終了
 }
 
 void GameScene::Draw() {
@@ -224,23 +220,37 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
-	player_->Draw(viewProjection_);
+	switch (phase_) {
+	case Phase::kTitle:
 
-	for (Enemy* enemy : enemies_) {
-		if (!enemy->isDead()) {
-			if (enemy != nullptr) {
-				enemy->Draw(viewProjection_);
+		break;
+	case Phase::kPlay:
+		player_->Draw(viewProjection_);
+
+		for (Enemy* enemy : enemies_) {
+			if (!enemy->isDead()) {
+				if (enemy != nullptr) {
+					enemy->Draw(viewProjection_);
+				}
 			}
 		}
+
+		// 弾の描画
+		for (EnemyBullet* bullet : enemyBullets_) {
+			bullet->Draw(viewProjection_);
+		}
+
+		break;
+
+	case Phase::kDeath:
+		// 死亡フェーズ中の処理を記述
+
+		break;
 	}
 
 	// 天球
 	skydome_->Draw();
 
-	// 弾の描画
-	for (EnemyBullet* bullet : enemyBullets_) {
-		bullet->Draw(viewProjection_);
-	}
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -254,7 +264,22 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 
-	player_->DrawUI();
+	switch (phase_) {
+	case Phase::kTitle:
+
+		break;
+
+	case Phase::kPlay:
+		
+		player_->DrawUI();
+
+		break;
+
+	case Phase::kDeath:
+		// 死亡フェーズ中の処理を記述
+		break;
+	}
+	
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
@@ -427,4 +452,19 @@ void GameScene::EnemyPop(Vector3 position) {
 	enemies_.push_back(enemy_);
 }
 
-void GameScene::ChangePhase() {}
+void GameScene::ChangePhase() {
+	switch (phase_) {
+	case Phase::kPlay:
+		// ゲームタイマーが0以下になったら死亡フェーズに移行
+		if (gameTimer <= 0) {
+			phase_ = Phase::kDeath;
+			// ゲームタイマーを600にリセット
+			gameTimer = 600;
+		}
+		break;
+
+	case Phase::kDeath:
+		// 死亡フェーズ中の処理を記述
+		break;
+	}
+}

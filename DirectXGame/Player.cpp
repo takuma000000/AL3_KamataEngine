@@ -233,7 +233,7 @@ Vector3 Player::GetWorldPosition() {
 	return worldPos;
 }
 
-void Player::OnCollision() {}
+void Player::OnCollision() { isDead_ = true; }
 
 void Player::SetParent(const WorldTransform* parent) {
 	// 親子関係を結ぶ
