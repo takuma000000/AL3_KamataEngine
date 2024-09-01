@@ -16,6 +16,10 @@
 #include "skydome.h"
 #include "Title.h"
 #include "Finish.h"
+#include "Finish_good.h"
+#include "Finish_nice.h"
+#include "Finish_fight.h"
+#include "Setumei.h"
 #include <list>
 #include <sstream>
 
@@ -69,10 +73,13 @@ public: // メンバ関数
 
 	void ChangePhase();
 
+	void ResetGameObjects();
+
 private: // メンバ変数
 
 	enum class Phase {
 		kTitle,
+		kSetumei,
 		kPlay,
 		kDeath,
 	};
@@ -118,6 +125,22 @@ private: // メンバ変数
 	Finish* finish_ = nullptr;
 	//フィニッシュモデル
 	Model* modelFinish_ = nullptr;
+
+	//good
+	Finish_good* finishGood_ = nullptr;
+	//
+	Model* modelFinishGood = nullptr;
+
+	//nice
+	Finish_nice* finishNice_ = nullptr;
+	//
+	Model* modelNice_ = nullptr;
+
+	Finish_fight* finishFight_ = nullptr;
+	Model* modelFight_ = nullptr;
+
+	Setumei* setumei_ = nullptr;
+	Model* modelSetumei_ = nullptr;
 
 	// RailCamera
 	RailCamera* railCamera_ = nullptr;

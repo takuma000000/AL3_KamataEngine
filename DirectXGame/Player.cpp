@@ -1,5 +1,4 @@
 #include "Player.h"
-#include "ImGuiManager.h"
 #include "MyMath.h"
 #include "WinApp.h"
 #include "cassert"
@@ -141,13 +140,7 @@ void Player::Update(const ViewProjection& viewProjection) {
 	worldTransform3DReticle_.translation_ = posNear + mouseDirection * kDistanceTestObject;
 	worldTransform3DReticle_.UpdateMatrix();
 
-	// キャラクターの座標を表示する処理
-	ImGui::Begin("chara");
-	ImGui::DragFloat3("translation", &worldTransform_.translation_.x, 0.01f);
-	ImGui::DragFloat3("rotate", &worldTransform_.rotation_.x, 0.01f);
-	ImGui::DragFloat2("translation2D", &posReticle.x, 0.01f);
-	ImGui::DragFloat3("rotate3D", &worldTransform3DReticle_.rotation_.x, 0.01f);
-	ImGui::End();
+	
 }
 
 void Player::Draw(ViewProjection& viewProjection) {

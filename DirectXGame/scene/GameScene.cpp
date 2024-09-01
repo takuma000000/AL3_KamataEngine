@@ -2,7 +2,6 @@
 #include "AxisIndicator.h"
 #include "MyMath.h"
 #include "TextureManager.h"
-#include "imgui.h"
 #include <cassert>
 #include <fstream>
 
@@ -44,7 +43,7 @@ void GameScene::Initialize() {
 	railCamera_->Initialize(worldTransform_, &viewProjection_);
 
 	player_ = new Player();
-	Vector3 playerPosition(0, 0, 20);
+	Vector3 playerPosition(0, -5, 20);
 	player_->Initialize(model_, textureHandle_, playerPosition);
 	player_->SetParent(railCamera_->GetWorldTransform());
 
@@ -74,9 +73,9 @@ void GameScene::Initialize() {
 	debugCamera_ = new DebugCamera(1280, 720);
 
 	// 軸方向表示の表示を有効にする
-	AxisIndicator::GetInstance()->SetVisible(true);
+	//AxisIndicator::GetInstance()->SetVisible(true);
 	// 軸方向表示が参照するビュープロジェクションを指定する( アドレス渡し )
-	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
+	//AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
 	// 天球の3Dモデルの生成
 	modelSkydome_ = Model::CreateFromOBJ("SkyDome", true);
@@ -84,34 +83,62 @@ void GameScene::Initialize() {
 	skydome_ = new skydome;
 	skydome_->Initialize(modelSkydome_, &viewProjection_);
 
-	//モデルタイトル
+	// モデルタイトル
 	modelTitle_ = Model::CreateFromOBJ("BombCrush_Title", true);
-	//タイトル
+	// タイトル
 	title_ = new Title;
 	title_->Initialize(modelTitle_, &viewProjection_);
 
-	//モデルフィニッシュ
+	// モデルフィニッシュ
 	modelFinish_ = Model::CreateFromOBJ("Finish", true);
 	finish_ = new Finish;
 	finish_->Initialize(modelFinish_, &viewProjection_);
 
+	//
+	modelFinishGood = Model::CreateFromOBJ("Finish_good", true);
+	finishGood_ = new Finish_good;
+	finishGood_->Initialize(modelFinishGood, &viewProjection_);
+
+	modelNice_ = Model::CreateFromOBJ("Finish_nice", true);
+	finishNice_ = new Finish_nice;
+	finishNice_->Initialize(modelNice_, &viewProjection_);
+
+	modelFight_ = Model::CreateFromOBJ("Finish_fight", true);
+	finishFight_ = new Finish_fight;
+	finishFight_->Initialize(modelFight_, &viewProjection_);
+
+	modelSetumei_ = Model::CreateFromOBJ("setumei", true);
+	setumei_ = new Setumei;
+	setumei_->Initialize(modelSetumei_, &viewProjection_);
 }
 
 void GameScene::Update() {
-
 
 	// フェーズごとの処理
 	switch (phase_) {
 	case Phase::kTitle:
 
+		ResetGameObjects();
+
 		title_->Update();
 
 		// スペースキーが押されたら kPlay フェーズに移行
 		if (input_->TriggerKey(DIK_SPACE)) {
-			phase_ = Phase::kPlay;
+			phase_ = Phase::kSetumei;
 			// ゲームタイマーを初期化
 			gameTimer = 1200;
 		}
+		break;
+
+	case Phase::kSetumei:
+
+		setumei_->Update();
+
+		// スペースキーが押されたら kPlay フェーズに移行
+		if (input_->TriggerKey(DIK_SPACE)) {
+			phase_ = Phase::kPlay;
+		}
+
 		break;
 
 	case Phase::kPlay:
@@ -123,7 +150,7 @@ void GameScene::Update() {
 			ChangePhase();
 		}
 
-		//finish_->Update();
+		// finish_->Update();
 
 		LoadEnemyPopData();
 		CheckAllCollision();
@@ -143,9 +170,9 @@ void GameScene::Update() {
 		}
 
 #ifdef _DEBUG
-		if (input_->TriggerKey(DIK_SPACE)) {
-			isDebugCameraActive_ = true;
-		}
+		/*if (input_->TriggerKey(DIK_SPACE)) {
+		    isDebugCameraActive_ = true;
+		}*/
 #endif // _DEBUG
 
 		skydome_->Update();
@@ -178,9 +205,13 @@ void GameScene::Update() {
 		});
 
 		worldTransform_.UpdateMatrix();
+
 		break;
 
 	case Phase::kDeath:
+
+		viewProjection_.Initialize();
+
 		// 死亡フェーズの処理
 		skydome_->Update();
 
@@ -204,31 +235,23 @@ void GameScene::Update() {
 
 		// finishオブジェクトの更新処理
 		finish_->Update();
+		finishGood_->Update();
+		finishNice_->Update();
+		finishFight_->Update();
+
+		// スペースキーが押されたら kPlay フェーズに移行
+		if (input_->TriggerKey(DIK_SPACE)) {
+			phase_ = Phase::kTitle;
+			// ゲームタイマーを初期化
+			gameTimer = 1200;
+		}
+
+		                                    // ウィンドウの終了
 
 		break;
-
 	}
 
-	// ImGui を使って GUI を描画
-	ImGui::Begin("Debug Info");                            // ウィンドウの開始
-	ImGui::Text("Enemies Defeated: %d", enemyDeadCounter); // 敵を倒したカウンターを表示
-	ImGui::Text("Game Timer: %d", gameTimer);              // ゲームタイマーの表示
-	// 現在のフェーズを表示
-	const char* phaseText = "";
-	switch (phase_) {
-	case Phase::kTitle:
-		phaseText = "Title";
-		break;
-	case Phase::kPlay:
-		phaseText = "Play";
-		break;
-	case Phase::kDeath:
-		phaseText = "Death";
-		break;
-	}
-	ImGui::Text("Current Phase: %s", phaseText);
-
-	ImGui::End();                                          // ウィンドウの終了
+	
 }
 
 void GameScene::Draw() {
@@ -265,7 +288,15 @@ void GameScene::Draw() {
 		title_->Draw();
 
 		break;
+
+	case Phase::kSetumei:
+
+		setumei_->Draw();
+
+		break;
+
 	case Phase::kPlay:
+
 		player_->Draw(viewProjection_);
 
 		for (Enemy* enemy : enemies_) {
@@ -288,15 +319,19 @@ void GameScene::Draw() {
 
 	case Phase::kDeath:
 
-		/*if (gameTimer <= 1200) {
+		// スコアの判定
+		if (enemyDeadCounter >= 18) {
 			finish_->Draw();
-		}*/
+		} else if (enemyDeadCounter >= 10 && enemyDeadCounter <= 17) {
+			finishGood_->Draw();
+		} else if (enemyDeadCounter >= 5 && enemyDeadCounter <= 9) {
+			finishNice_->Draw();
+		} else if (enemyDeadCounter >= 0 && enemyDeadCounter <= 4) {
+			finishFight_->Draw();
+		}
 
 		break;
 	}
-
-	
-
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -316,17 +351,16 @@ void GameScene::Draw() {
 		break;
 
 	case Phase::kPlay:
-		
+
 		player_->DrawUI();
 
 		break;
 
 	case Phase::kDeath:
 		// 死亡フェーズ中の処理を記述
-	
+
 		break;
 	}
-	
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
@@ -512,7 +546,29 @@ void GameScene::ChangePhase() {
 
 	case Phase::kDeath:
 		// 死亡フェーズ中の処理を記述
-		
+
 		break;
 	}
+}
+
+void GameScene::ResetGameObjects() {
+
+	// プレイヤーのリセット
+	Vector3 playerPosition(0, -5, 20);
+	player_->Initialize(model_, textureHandle_, playerPosition);
+
+	// 敵のリセット
+	for (Enemy* enemy : enemies_) {
+		delete enemy;
+	}
+	enemies_.clear();
+
+	// 敵弾のリセット
+	for (EnemyBullet* bullet : enemyBullets_) {
+		delete bullet;
+	}
+	enemyBullets_.clear();
+
+	// その他必要なリセット処理があればここに追加
+	enemyDeadCounter = 0;
 }
