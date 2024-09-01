@@ -28,8 +28,8 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
-	textureHandle_ = TextureManager::Load("sample.png");
-	enemyTextureHandle_ = TextureManager::Load("mario_yosshi.jpg");
+	textureHandle_ = TextureManager::Load("ziki.png");
+	enemyTextureHandle_ = TextureManager::Load("enemy.png");
 	// レティクルのテクスチャ
 	TextureManager::Load("point.png");
 
