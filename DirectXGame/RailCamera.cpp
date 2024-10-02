@@ -1,5 +1,4 @@
 #include "RailCamera.h"
-#include "ImGuiManager.h"
 #include "MyMath.h"
 
 void RailCamera::Initialize(WorldTransform& transform, ViewProjection* viewProjection) {
@@ -32,10 +31,4 @@ void RailCamera::Update() {
 	if (viewProjection_ != nullptr) {
 		viewProjection_->matView = MyMath::Inverse4x4(worldTransform_->matWorld_);
 	}
-
-	// ImGui を使用してカメラの座標を表示
-	ImGui::Begin("Camera");
-	ImGui::SliderFloat3("Translation", &worldTransform_->translation_.x, -10.0f, 10.0f);
-	ImGui::SliderFloat3("Rotation", &worldTransform_->rotation_.x, -10.0f, 10.0f);
-	ImGui::End();
 }
